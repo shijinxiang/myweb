@@ -1,0 +1,2291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网络赛道备考系统</title>
+    <style>
+        /* style.css 内容开始 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* 改为 flex-start 以避免内容过长时溢出 */
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+            box-sizing: border-box;
+            margin-top: 20px; /* 添加顶部外边距 */
+            margin-bottom: 20px; /* 添加底部外边距 */
+        }
+
+        h2 {
+            color: #007bff;
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+
+        h3 {
+            color: #333;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            text-align: left;
+            font-size: 1.3em;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input[type="password"],
+        input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .mode-options button,
+        .result-actions button {
+            min-width: 120px;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .options-container {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            display: block;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .option-item:hover {
+            background-color: #f0f0f0;
+            border-color: #bbb;
+        }
+
+        .option-item input[type="radio"],
+        .option-item input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2); /* 放大单选/复选框 */
+        }
+
+        .option-item.selected {
+            background-color: #e0f7fa;
+            border-color: #00bcd4;
+        }
+
+        .option-item.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            font-weight: bold;
+        }
+
+        .option-item.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            font-weight: bold;
+        }
+
+        .option-item.incorrect label {
+            color: #dc3545;
+        }
+
+        .option-item.correct label {
+            color: #28a745;
+        }
+
+        .error-message {
+            color: #dc3545;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .feedback.correct {
+            color: #28a745;
+        }
+
+        .feedback.incorrect {
+            color: #dc3545;
+        }
+
+        .nav-btn {
+            margin-top: 15px;
+        }
+
+        .result-actions {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        #review-questions-container {
+            max-height: 60vh;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .review-question-item {
+            background-color: #fdfdfd;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .review-question-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .review-question-item h4 {
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .review-question-item .options-container {
+            margin-top: 10px;
+        }
+
+        .review-question-item .option-item {
+            padding: 8px;
+            margin-bottom: 5px;
+        }
+
+        .review-explanation {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-left: 4px solid #007bff;
+            font-size: 0.95em;
+            color: #555;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+            button {
+                padding: 10px 20px;
+                font-size: 0.95em;
+            }
+            .mode-options button,
+            .result-actions button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        /* style.css 内容结束 */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 密码输入界面 -->
+        <section id="password-screen" class="screen active">
+            <h2>欢迎来到网络赛道备考系统</h2>
+            <p>请输入访问密码：</p>
+            <input type="password" id="password-input" placeholder="请输入密码">
+            <button id="password-submit">进入</button>
+            <p id="password-error" class="error-message"></p>
+        </section>
+
+        <!-- 模式选择界面 -->
+        <section id="mode-selection-screen" class="screen">
+            <h2>选择学习模式</h2>
+            <div class="mode-options">
+                <button id="practice-mode-btn">练习模式</button>
+                <button id="exam-mode-btn">考试模式</button>
+            </div>
+        </section>
+
+        <!-- 题目设置界面 -->
+        <section id="question-settings-screen" class="screen">
+            <h2>题目设置</h2>
+            <p>题库共 <span id="total-questions-display">XXX</span> 道题。</p>
+            <label for="num-questions">选择本次练习/考试题目数量：</label>
+            <input type="number" id="num-questions" min="1" max="XXX" value="10">
+            <p id="question-num-error" class="error-message"></p>
+            <button id="start-test-btn">开始测试</button>
+            <button id="back-to-mode-btn">返回模式选择</button>
+        </section>
+
+        <!-- 答题界面 -->
+        <section id="quiz-screen" class="screen">
+            <div class="quiz-header">
+                <p>模式：<span id="current-mode"></span></p>
+                <p>时间：<span id="timer">00:00</span></p>
+            </div>
+            <h3 id="question-text"></h3>
+            <div id="options-container" class="options-container">
+                <!-- 选项将通过 JS 动态生成 -->
+            </div>
+            <p id="feedback" class="feedback"></p>
+            <button id="prev-question-btn" class="nav-btn" style="display: none;">上一题</button>
+            <button id="next-question-btn" class="nav-btn">下一题</button>
+            <button id="submit-exam-btn" class="nav-btn" style="display: none;">提交试卷</button>
+            <button id="show-answer-btn" class="nav-btn" style="display: none;">查看答案</button>
+        </section>
+
+        <!-- 结果展示界面 -->
+        <section id="results-screen" class="screen">
+            <h2>测试结果</h2>
+            <p>总得分：<span id="score-display">0</span> / <span id="max-score-display">0</span></p>
+            <p>正确率：<span id="accuracy-display">0%</span></p>
+            <p>总用时：<span id="total-time-display">00:00</span></p>
+            <div class="result-actions">
+                <button id="review-all-btn">全部题目</button>
+                <button id="review-incorrect-btn">错题复习</button>
+                <button id="retake-test-btn">重新测试</button>
+                <button id="back-to-mode-selection-btn">返回模式选择</button>
+                <button id="retake-incorrect-btn" style="display: none;">错题重测</button>
+            </div>
+        </section>
+
+        <!-- 题目回顾界面 -->
+        <section id="review-screen" class="screen">
+            <h2>题目回顾</h2>
+            <div id="review-questions-container">
+                <!-- 回顾题目将通过 JS 动态生成 -->
+            </div>
+            <button id="close-review-btn">关闭回顾</button>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM 元素引用 ---
+            const passwordScreen = document.getElementById('password-screen');
+            const passwordInput = document.getElementById('password-input');
+            const passwordSubmit = document.getElementById('password-submit');
+            const passwordError = document.getElementById('password-error');
+
+            const modeSelectionScreen = document.getElementById('mode-selection-screen');
+            const practiceModeBtn = document.getElementById('practice-mode-btn');
+            const examModeBtn = document.getElementById('exam-mode-btn');
+
+            const questionSettingsScreen = document.getElementById('question-settings-screen');
+            const totalQuestionsDisplay = document.getElementById('total-questions-display');
+            const numQuestionsInput = document.getElementById('num-questions');
+            const questionNumError = document.getElementById('question-num-error');
+            const startTestBtn = document.getElementById('start-test-btn');
+            const backToModeBtn = document.getElementById('back-to-mode-btn');
+
+            const quizScreen = document.getElementById('quiz-screen');
+            const currentModeDisplay = document.getElementById('current-mode');
+            const timerDisplay = document.getElementById('timer');
+            const questionText = document.getElementById('question-text');
+            const optionsContainer = document.getElementById('options-container');
+            const feedbackMessage = document.getElementById('feedback');
+            const prevQuestionBtn = document.getElementById('prev-question-btn');
+            const nextQuestionBtn = document.getElementById('next-question-btn');
+            const submitExamBtn = document.getElementById('submit-exam-btn');
+            const showAnswerBtn = document.getElementById('show-answer-btn');
+
+            const resultsScreen = document.getElementById('results-screen');
+            const scoreDisplay = document.getElementById('score-display');
+            const maxScoreDisplay = document.getElementById('max-score-display');
+            const accuracyDisplay = document.getElementById('accuracy-display');
+            const totalTimeDisplay = document.getElementById('total-time-display');
+            const reviewAllBtn = document.getElementById('review-all-btn');
+            const reviewIncorrectBtn = document.getElementById('review-incorrect-btn');
+            const retakeTestBtn = document.getElementById('retake-test-btn');
+            const backToModeSelectionBtn = document.getElementById('back-to-mode-selection-btn');
+            const retakeIncorrectBtn = document.getElementById('retake-incorrect-btn');
+
+            const reviewScreen = document.getElementById('review-screen');
+            const reviewQuestionsContainer = document.getElementById('review-questions-container');
+            const closeReviewBtn = document.getElementById('close-review-btn');
+
+            // --- 全局变量和状态 ---
+            const CORRECT_PASSWORD = 'huawei'; // 您可以更改密码
+            let currentScreen = passwordScreen;
+            let currentMode = ''; // 'practice' or 'exam'
+
+            // ⬇️⬇️⬇️ 您的题库数据已粘贴到这里 ⬇️⬇️⬇️
+            let allQuestions = [
+                {
+                    id: 1, // 已根据您的要求重新编号
+                    type: "single-choice",
+                    question: "1.若想实现对用户的论坛发帖、用户登录等行为进行控制，应配置以下哪一项 HTTP 行为控制？（安全考点）",
+                    options: [
+                        "A.重定向",
+                        "B.POST 操作",
+                        "C.文件下载",
+                        "D.文件上传"
+                    ],
+                    correctAnswer: "B.POST 操作",
+                    explanation: "POST操作是 HTTP 协议中的一种请求方法，用于向服务器提交数据，但它本身不能实现对用户行为的控制。"
+                },
+                {
+                    id: 2,
+                    type: "single-choice",
+                    question: "2.以下哪一项不属于远程用户通过 SSL VPN 访问内网资源的流程？（安全考点）",
+                    options: [
+                        "A.访问计费",
+                        "B.资源访问",
+                        "C.用户登录",
+                        "D.用户认证"
+                    ],
+                    correctAnswer: "A.访问计费",
+                    explanation: "访问计费通常是与远程用户通过 SSL VPN 访问内网资源的流程无关的一个环节。访问计费是指对用户在访问内网资源时所产生的费用进行计算和收取的过程。"
+                },
+                {
+                    id: 3,
+                    type: "single-choice",
+                    question: "3.以下关于智能 DNS 的描述，错误的是哪一项？（安全考点）",
+                    options: [
+                        "A.智能 DNS 无需配合其它技术，可以单独使用",
+                        "B.智能 DNS 支持加权轮询方式实现链路负载均衡",
+                        "C.通过配置智能 DNS功能，防火墙可以将 DNS 回应报文中的解析地址进行智能的修改，使用户能够获得最合适的解析地址，即与用户属于同—ISP 网络的地址",
+                        "D.智能能 DNS分为单服务器智能 DNS 和多服务器智能 DNS两种场景"
+                    ],
+                    correctAnswer: "A.智能 DNS 无需配合其它技术，可以单独使用",
+                    explanation: "智能 DNS可以单独使用，但在某些情况下可能需要配合其他技术来实现更好的效果。智能 DNS 主要用于根据用户的地理位置、网络质量等因素，自动选择最优的 DNS 服务器，以提高网络访问速度和性能。它可以单独使用，只需将智能 DNS 服务器的地址设置为本地设备或路由器的 DNS服务器即可。然而，在某些特定的网络环境下，智能 DNS可能无法完全解决问题。例如，在遭受 DDoS 攻击或 DNS 缓存污染等情况下，智能 DNS 可能无法提供足够的保护。这时，可能需要配合其他技术，如防火墙、反向代理或 DNSSEC 等，来增强网络的安全性和稳定性。"
+                },
+                {
+                    id: 4,
+                    type: "single-choice",
+                    question: "4.以下关于渗透测试中黑盒测试的描述，错误的是哪一项？（安全考点）",
+                    options: [
+                        "A.更贴近用户的实际使用场景",
+                        "B.测试覆盖率较低。一般只能覆盖到代码的 30％",
+                        "C.可以提高代码的质量，发现代码中隐藏的问题",
+                        "D.测试过程较为简单，不需要了解程序内部的代码结构及特性"
+                    ],
+                    correctAnswer: "C.可以提高代码的质量，发现代码中隐藏的问题",
+                    explanation: "关于渗透测试中黑盒测试的描述可以提高代码的质量，发现代码中隐藏的问题。黑盒测试是一种测试方法，测试人员在不了解内部实现细节的情况下，对软件系统进行测试。通过黑盒测试，测试人员可以模拟真实用户的操作，发现系统中的漏洞和错误。通过发现和修复这些问题，可以提高代码的质量，并最大程度地减少潜在的安全风险。"
+                },
+                {
+                    id: 5,
+                    type: "single-choice",
+                    question: "5.使用 iMaster NCE Campus作为 Portal 服务器。在华为无线控制器上部署 Portal认证。则以下哪项配置不是必须的？（安全考点）",
+                    options: [
+                        "A.MAC认证模板",
+                        "B.认证模板",
+                        "C.Portal 认证模板",
+                        "D.URL 模板"
+                    ],
+                    correctAnswer: "A.MAC认证模板",
+                    explanation: "以下 MAC 认证模板配置不是必须的：MAC地址白名单：在 MAC 认证模板中配置特定的 MAC地址，允许这些设备无需进行 Portal 认证即可访问网络。如果不需要使用MAC地址白名单，可以不进行配置。MAC地址黑名单：在 MAC 认证模板中配置特定的 MAC地址，禁止这些设备访问网络。如果不需要使用 MAC地址黑名单，可以不进行配置。MAC地址过期时间：在 MAC认证模板中配置 MAC 地址的过期时间，设定一段时间后需要重新进行 Portal 认证。如果不需要设定MAC地址的过期时间，可以不进行配置。MAC地址绑定 IP：在 MAC 认证模板中配置 MAC地址与 IP 地址的绑定关系，确保该 MAC 地址只能使用指定的 IP 地址进行访问。如果不需要进行 MAC 地址与 IP 地址的绑定，可以不进行配置。请根据实际需求进行配置，以上配置项根据具体情况决定是否需要配置。"
+                },
+                {
+                    id: 6,
+                    type: "single-choice",
+                    question: "6.某企业的业务网络中采用了高端框式交换机作为核心交换机，近日该框式交换机的某个交换板卡故障，导致部分业务流量中断，则该故障属于哪一类安全事件？（安全考点）",
+                    options: [
+                        "A.灾害性事件",
+                        "B.信息破坏事件",
+                        "C.网络攻击事件",
+                        "D.设备设施故障事件"
+                    ],
+                    correctAnswer: "D.设备设施故障事件",
+                    explanation: "根据题目描述，故障是由框式交换机中的一个交换板卡故障导致的，这种情况通常被归类为设备设施故障事件（Device and Facility Failure Event）。设备设施故障事件指的是硬件或设备的故障，例如交换机、路由器、服务器等出现故障，导致网络中断或服务不可用。在这种情况下，故障是由于硬件故障引起的，而不是由于灾害、恶意攻击或信息破坏引起的因此，答案 D（设备设施故障事件）是正确的。"
+                },
+                {
+                    id: 7,
+                    type: "single-choice",
+                    question: "7.以下哪一项为 Tracert 报文攻击的防范方法？（安全考点）",
+                    options: [
+                        "A.对于检测到的超时 ICMP 报文或 UDP 报文，或者目的端口不可达的报文，给予丢弃处理",
+                        "B.对 ICMP 不可达报文进行丢弃，并记录攻击日志",
+                        "C.用户可以根据实际网络需要配置允许通过的 ICMP 报文的最大长度，当实际 ICMP 报文的长度超过该值时，将丢弃该报文",
+                        "D.丢弃带有时间的 IP 报文"
+                    ],
+                    correctAnswer: "A.对于检测到的超时 ICMP 报文或 UDP 报文，或者目的端口不可达的报文，给予丢弃处理",
+                    explanation: "Tracert（或 traceroute）是一种网络诊断工具，它通常通过发送一系列的 ICMP Echo 请求（ping 请求）到目标主机，来确定数据包从一个源主机到目标主机所经过的路由路径。然后，目标主机和经过的中间路由器会发送响应，包括超时 ICMP 报文或 UDP报文，以便在 Tracert结果中显示路由路径。为了防范 Tracert 报文的滥用或可能的攻击，通常可以采取以下方法： A. 对于检测到的超时 ICMP 报文或 UDP报文，或者目的端口不可达的报文，给予丢弃处理：这是一种常见的方法，通过丢弃这些响应报文，可以减少不必要的信息泄漏。 B. 对 ICMP 不可达报文进行丢弃，并记录攻击日志：这也是一种有效的方法，它可以记录可能的攻击尝试，并且可以帮助跟踪和分析潜在的问题。 C. 用户可以根据实际网络需要配置允许通过的 ICMP 报文的最大长度，当实际 ICMP 报文的长度超过该值时，将丢弃该报文：这种方法可以限制 ICMP 报文的大小，防止过大的报文引发问题。 D. 丢弃带有时间的 IP 报文：这种方法可以防止时间戳信息的泄漏。所以，答案 A 是正确的，它是一种防范 Tracert报文攻击的方法。"
+                },
+                {
+                    id: 8,
+                    type: "single-choice",
+                    question: "8.若在网络中部署 Anti—DDoS 防御方案，则以下哪一项不是管理中心的必要配置？（安全考点）",
+                    options: [
+                        "A.添加 Anti-DDoS 设备",
+                        "B.配置防御策略",
+                        "C.配置流量引导",
+                        "D.配置防护对象"
+                    ],
+                    correctAnswer: "C.配置流量引导",
+                    explanation: "在部署 Anti-DDoS 防御方案时，以下是管理中心的必要配置：A. 添加 Anti-DDoS 设备：必须将 Anti-DDoS 设备添加到管理中心，以便管理和监控这些设备。 B. 配置防御策略：防御策略定义了如何响应和应对 DDoS 攻击，包括哪些流量应该被过滤、限制或放行等。 D. 配置防护对象：防护对象通常是受到保护的目标，可以是特定的 IP 地址、端口、应用程序等，需要受到 Anti-DDoS 防御的对象。而选项 C 中的“配置流量引导”通常不是管理中心的必要配置，因为流量引导通常是 Anti-DDoS 设备的配置选项，用于将流量引导到 Anti-DDoS 设备以进行检测和防御。管理中心的主要任务是管理设备、配置策略和监控防御情况，而不是配置流量引导。因此，答案 C 是正确的，不是管理中心的必要配置。"
+                },
+                {
+                    id: 9,
+                    type: "single-choice",
+                    question: "9.以下关于 Web 代理中 Web 改写的描述，错误的是哪一项？（安全考点）",
+                    options: [
+                        "A.可能造成字体不全",
+                        "B.可以隐藏内网服务器地址，安全性较高",
+                        "C.依赖 IE 控件",
+                        "D.可能造成图片错位"
+                    ],
+                    correctAnswer: "C.依赖 IE 控件",
+                    explanation: "Web 代理中的 Web 改写是一种用于修改 HTTP 响应内容的技术，通常用于提高安全性、性能和用户体验。关于 Web 改写的描述如下： A. 可能造成字体不全：这是可能的，因为 Web 改写可能会修改页面的内容，包括字体和文本。 B. 可以隐藏内网服务器地址，增加了安全性，因为外部用户无法直接访问内部服务器。 C. 依赖 IE 控件：这是错误的。Web 改写并不依赖 IE 控件，而是在代理服务器上执行的，通常与浏览器无关。 D. 可能造成图片错位：这是可能的，因为 Web 改写可能会修改页面内容，包括图片位置。所以，答案 C 是正确的，Web 改写通常不依赖 IE 控件。"
+                },
+                {
+                    id: 10,
+                    type: "single-choice",
+                    question: "10.以下哪一项攻击不会暴露网络拓扑信息？（安全考点）",
+                    options: [
+                        "A.Teardrop 玫击",
+                        "B.扫描攻击",
+                        "C.带路由记录项的 IP 报文攻击端",
+                        "D.Tracert 报文攻击"
+                    ],
+                    correctAnswer: "A.Teardrop 玫击",
+                    explanation: "以下是对每个选项的分析： A. Teardrop 攻击：Teardrop攻击是一种攻击，其目标是导致目标系统崩溃或变得不稳定，但通常不会暴露网络拓扑信息。 B. 扫描攻击：扫描攻击通常涉及对目标网络的端口扫描，以发现可能的漏洞或开放的服务，这可能会泄露网络拓扑信息。 C. 带路由记录项的 IP 报文攻击：带有路由记录项的IP 报文攻击可以通过路由记录项暴露网络拓扑信息，因为它记录了数据包经过的路由路径。 D. Tracert报文攻击：Tracert 报文攻击通常用于确定目标系统的网络路径，因此可以用于暴露网络拓扑信息。因此，唯一不会暴露网络拓扑信息的选项是 A. Teardrop 攻击。其他选项 B、C 和 D都有潜在的风险，可能会泄露网络拓扑信息。所以答案 A 是正确的。"
+                },
+                {
+                    id: 11,
+                    type: "single-choice",
+                    question: "11.用户使用 SSL 访问内网的网络资源，管理员为用户开启了文件共享和 web代理的业务，并且在防火墙上放行了业务的流量，但是用户在 PC 上输入虚拟网关的地址后，在网页中看不到文件共享和 Web 代理的列表，以下哪一选项可能导致该故障产生？（安全考点）",
+                    options: [
+                        "A.管理员没有为用户配置文件共享和 Web 代理的授权",
+                        "B.用户 PC 的虚拟网卡上有没有获取到虚拟 IP 地址",
+                        "C.防火墙与客户端之间路由不可达",
+                        "D.虚拟网关对外 HAT的端口错误"
+                    ],
+                    correctAnswer: "A.管理员没有为用户配置文件共享和 Web 代理的授权",
+                    explanation: "用户无法在网页中看到文件共享和 Web 代理的列表可能是由于管理员没有为用户配置文件共享和 Web 代理的授权引起的。即使防火墙上放行了业务的流量，用户仍然需要被授权才能访问这些资源。选项 B、C 和 D 描述的问题可能导致网络故障，但它们不是直接导致用户无法看到文件共享和 Web 代理列表的原因。所以答案 A 是正确的，管理员没有为用户配置授权可能导致该故障。用户需要合适的授权才能访问这些资源"
+                },
+                {
+                    id: 12,
+                    type: "single-choice",
+                    question: "12.WAF 设备的工作模式不包括以下哪一项？（安全考点）",
+                    options: [
+                        "A.桥模式",
+                        "B.正向代理",
+                        "C.透明代理",
+                        "D.反向代理"
+                    ],
+                    correctAnswer: "B.正向代理",
+                    explanation: "WAF（Web Application Firewall）设备的工作模式包括桥模式、透明代理和反向代理。正向代理并不是 WAF 设备的工作模式，所以选项 B 是正确的。"
+                },
+                {
+                    id: 13,
+                    type: "single-choice",
+                    question: "13.以下哪一项不属于畸形报文攻击？",
+                    options: [
+                        "A.Ping of Death 攻击",
+                        "B.WinNuke攻击",
+                        "C.IP 欺骗攻击",
+                        "D.超大 ICMP 报文攻击"
+                    ],
+                    correctAnswer: "C.IP 欺骗攻击",
+                    explanation: "畸形报文攻击是一种网络攻击，攻击者发送具有畸形、异常或非法格式的网络数据包，以试图绕过或利用网络安全设备的漏洞。在所提供的选项中，Ping of Death 攻击、WinNuke攻击和超大ICMP报文攻击都属于畸形报文攻击的类型。而 IP 欺骗攻击通常不属于畸形报文攻击，它涉及欺骗目标主机或网络，而不是直接通过畸形数据包攻击。所以选项 C 是不属于畸形报文攻击的。"
+                },
+                {
+                    id: 14,
+                    type: "single-choice",
+                    question: "14.以下关于虚拟系统使用限制的描述，错误的是哪项？（安全考点）",
+                    options: [
+                        "A.管理口不能分配给虚拟系统",
+                        "B.虚拟系统管理员能通过 Console 口登录设备",
+                        "C.如果接口已经配置了 IP 地址，在分配给虚拟时会被清除",
+                        "D.只能在根系统中进行系统软件的升级"
+                    ],
+                    correctAnswer: "B.虚拟系统管理员能通过 Console 口登录设备",
+                    explanation: "虚拟系统使用限制的描述如下： A. 管理口不能分配给虚拟系统：这是正确的，管理口不能直接分配给虚拟系统。 B. 虚拟系统管理员能通过 Console 口登录设备：这是错误的描述。虚拟系统管理员可以通过 Console 口登录设备，所以选项 B 是错误的。 C. 如果接口已经配置了 IP 地址，在分配给虚拟时会被清除：这是正确的，当将接口分配给虚拟系统时，如果接口已经配置了 IP 地址，它会被清除。 D. 只能在根系统中进行系统软件的升级：这是正确的，虚拟系统无法进行系统软件的升级，只能在根系统中进行。"
+                },
+                {
+                    id: 15,
+                    type: "single-choice",
+                    question: "15.IPS 设备签名过滤器的过滤条件不包括以下哪一项？（安全考点）",
+                    options: [
+                        "A.协议",
+                        "B.威胁类别",
+                        "C.对象",
+                        "D.攻击源"
+                    ],
+                    correctAnswer: "D.攻击源",
+                    explanation: "IPS 设备签名过滤器的过滤条件包括协议、威胁类别、对象等，但不包括攻击源。所以选项 D 是不包括在过滤条件中的。"
+                },
+                {
+                    id: 16,
+                    type: "single-choice",
+                    question: "16.IPS 的签名过滤器是满足指定过滤条件的签名集合。签名过滤器的过滤条件不包括以下哪一项？（安全考点）",
+                    options: [
+                        "A.操作系统",
+                        "B.威胁类别",
+                        "C.协议",
+                        "D.签名 ID"
+                    ],
+                    correctAnswer: "D.签名 ID",
+                    explanation: "IPS 的签名过滤器用于选择满足指定过滤条件的签名集合。这些过滤条件包括操作系统、威胁类别、协议等，但不包括签名ID。所以选项 D 是不包括在过滤条件中的。"
+                },
+                {
+                    id: 17,
+                    type: "single-choice",
+                    question: "17.链路聚合的 LACP模式采用 LACPDU 选举主动端，以下哪些信息不会在 LACPDU 中携带？（网络考点）",
+                    options: [
+                        "A.MAC地址",
+                        "B.接口描述",
+                        "C.接口优先级",
+                        "D.设备优先级"
+                    ],
+                    correctAnswer: "B.接口描述",
+                    explanation: "LACP（链路汇聚控制协议）是一种实现链路动态汇聚的协议。LACP协议通过 LACPDU（链路汇聚控制协议数据单元）与对端交互信息。启用某端口的 LACP 协议后，该端口将通过发送LACPDU向对端通告自己的系统优先级、系统 MAC 地址、端口优先级、端口号和操作 Key"
+                },
+                {
+                    id: 18,
+                    type: "single-choice",
+                    question: "18.当 AP 与 AC 处于不同三层网络时，推荐使用哪种方式让 AP 发现 AC？（网络考点）",
+                    options: [
+                        "A.DHCP",
+                        "B.AP手动指定",
+                        "C.广播",
+                        "D.DNS"
+                    ],
+                    correctAnswer: "A.DHCP",
+                    explanation: "AP 和 AC 源 IP 不在同一网段，通过 DHCP 方式，让 AP 获取 IP 地址的时候，DHCP 服务器顺带发 AC 的源 IP 地址"
+                },
+                {
+                    id: 19,
+                    type: "single-choice",
+                    question: "19.以下关于静态路由说法错误的是？（网络考点）",
+                    options: [
+                        "A.通过网络管理员手动配置",
+                        "B.路由器之间需要交互路由信息",
+                        "C.不能自动适应网络拓扑的变化",
+                        "D.对系统性能要求低"
+                    ],
+                    correctAnswer: "B.路由器之间需要交互路由信息",
+                    explanation: "静态路由是一种 路由 的方式，路由项由手动配置，而非动态决定。 与 动态路由 不同，静态路由是固定的，不会改变"
+                },
+                {
+                    id: 20,
+                    type: "single-choice",
+                    question: "20.在 VRP平台使用 ping 命令时，如果需要指定一个 IP 地址作为回显请求报文的源地址，那么应该使用下面哪一个参数？（网络考点）",
+                    options: [
+                        "A.-d",
+                        "B.-a",
+                        "C.-s",
+                        "D.-n"
+                    ],
+                    correctAnswer: "B.-a",
+                    explanation: "-a：设置发送 Echo Request 报文的源 IP 地址。如果不指定源IP 地址，将采用出接口的 IP 地址作为 Echo Request 报文发送的源地址。-i：设置发送 Echo Request 报文的接口。如果不指定接口，将采用默认的路由出接口。-m：设置发送下一个 Echo Request 报文的等待时间。缺省值是 500毫秒。-c：设置发送 Echo Request 报文的次数，缺省值为 5。当网络质量不高时，可以增加发送报文数目，通过丢包率来检测网络质量。-f：设置发送的报文不分片。使用-f参数后，ICMP 报文将不会被分片，如果 ICMP 报文的大小超过链路的 MTU 值，ICMP 报文将会被丢弃。可以通过不使用-f 参数或者增大链路 MTU值的方式使 ICMP 报文不被丢弃。-h：设置 TTL 的值，缺省值为 255。报文在转发过程中，如果 TTL 字段的值减为 0，设备就会向源端发送 ICMP 超时报文，表明目的不可达。"
+                },
+                {
+                    id: 21,
+                    type: "single-choice",
+                    question: "21.FIT AP 获取 AC 的 IP 地址之后首先执行的操作是？（网络考点）",
+                    options: [
+                        "A.建立 CAPWAP 隧道",
+                        "B.请求配置文件",
+                        "C.下载配置文件",
+                        "D.升级软件版本"
+                    ],
+                    correctAnswer: "A.建立 CAPWAP 隧道",
+                    explanation: "AP 上线过程在集中式网络架构中，FIT AP 需要完成上线过程，AC 才能实现对 AP的集中管理和控制。AP 的上线过程包括：1 AP 获取 IP 地址 2 CAPWAP 隧道建立阶段 3 AP接入控制阶段 4 AP的版本升级阶段 5 CAPWAP 隧道维持阶段"
+                },
+                {
+                    id: 22,
+                    type: "single-choice",
+                    question: "22.段路由 SR（segment routing）是基于什么理念而设计的在网络上转发数据包的一种协议？（网络考点）",
+                    options: [
+                        "A.策略路由",
+                        "B.源路由",
+                        "C.路由策略",
+                        "D.目的路由"
+                    ],
+                    correctAnswer: "B.源路由",
+                    explanation: "SR（Segment Routing，段路由）是基于源路由理念而设计的在网络上转发数据包的一种架构，而不是一个单独的技术。 SR 将网络路径分成一个个段（Segment），并且为这些段和网络中的转发节点分配段标识 ID（即 SID）。 通过对段和网络节点进行有序排列（Segment List），就可以得到一条转发路径。"
+                },
+                {
+                    id: 23,
+                    type: "single-choice",
+                    question: "23.在 PPP 中，当通信双方的两端检测到物理链路激活时，就会从链路不可用阶段转化到链路建立阶段，在这个阶段主要是通过（）协议进行链路参数的协商（网络考点）",
+                    options: [
+                        "A.IP",
+                        "B.LCP",
+                        "C.NCP",
+                        "D.DHCP"
+                    ],
+                    correctAnswer: "B.LCP",
+                    explanation: "链路控制协议 LinkControlProtocol 用来建立、拆除和监控PPP 数据链路 网络层控制协议 NetworkControlProtocol 用于对不同的网络层协议进行连接建立和参数协商 为了能适应多种多样的链路类型，（这里指的是物理层链路类型）PPP 定义了链路控制协议LCP。"
+                },
+                {
+                    id: 24,
+                    type: "single-choice",
+                    question: "24.IP 报文头部中有一个 TTL 字段，关于该字段说法正确的是？（网络考点）",
+                    options: [
+                        "A.该字段用于数据包防环",
+                        "B.该字段用于数据包分片",
+                        "C.该字段用来表示数据包的优先级",
+                        "D.该字段长度为 7 位"
+                    ],
+                    correctAnswer: "A.该字段用于数据包防环",
+                    explanation: "TTL（time to live），即生存时间，该字段表示一个 IP 数据报能够经过的最大的路由器跳数"
+                },
+                {
+                    id: 25,
+                    type: "single-choice",
+                    question: "25.IPV6 报头中哪个字段的作用类似于 IPV4 报头中的 TTL 字段？（网络考点）",
+                    options: [
+                        "A.hop limit",
+                        "B.Next header",
+                        "C.Traffic class",
+                        "D.Version"
+                    ],
+                    correctAnswer: "A.hop limit",
+                    explanation: "IPv6 中 Hop Limit 字段含义类似 IPv4 的 TTL"
+                },
+                {
+                    id: 26,
+                    type: "single-choice",
+                    question: "26.缺省情况下在 SNMP协议中，代理进程使用哪个端口号向 NMS 发送告警消息？（网络考点）",
+                    options: [
+                        "A.161",
+                        "B.163",
+                        "C.164",
+                        "D.162"
+                    ],
+                    correctAnswer: "D.162",
+                    explanation: "端口号 162：SNMP Agent 向 NMS 发送 Trap 或 Inform 时，使用该端口号。 该端口号支持用户配置"
+                },
+                {
+                    id: 27,
+                    type: "single-choice",
+                    question: "27.查询设备 OSPF 协议的配置信息，可以使用下列哪些命令？（网络考点）",
+                    options: [
+                        "A.在 ospf 协议视图下输入命令＂display this＂",
+                        "B.Display current-configuration",
+                        "C.Display ospf peer",
+                        "D.Display ip routing-table"
+                    ],
+                    correctAnswer: "A.在 ospf 协议视图下输入命令＂display this＂",
+                    explanation: "\"display this\"指查看该视图下的配置信息；"
+                },
+                {
+                    id: 28,
+                    type: "single-choice",
+                    question: "28.VRP不支持哪种方式对路由器进行配置？（网络考点）",
+                    options: [
+                        "A.通过 mini USB 口对路由器进行配置",
+                        "B.通过 FTP 对路由器进行配置",
+                        "C.通过 console 口对路由器进行配置",
+                        "D.通过 telnet 对路由器进行配置"
+                    ],
+                    correctAnswer: "B.通过 FTP 对路由器进行配置",
+                    explanation: "console口和 mini usb 口可以直接对路由器进行管理（无需网络）telnet 可以对路由器进行远程管理（需保证管理机和路由器的telnet网络连通性）FTP 是用来给路由器上传下载文件的，不是对路由器进行配置调试的"
+                },
+                {
+                    id: 29,
+                    type: "single-choice",
+                    question: "29.以下哪一项是入侵防御特征库中包含的签名？（安全考点）",
+                    options: [
+                        "A.预定义签名",
+                        "B.自定义签名",
+                        "C.签名过滤器",
+                        "D.例外签名"
+                    ],
+                    correctAnswer: "A.预定义签名",
+                    explanation: "入侵防御特征库通常包含预定义签名，这些签名用于检测已知的攻击模式和威胁。自定义签名、签名过滤器和例外签名可能需要根据具体情况进行配置和管理，而不是通常包含在特征库中。"
+                },
+                {
+                    id: 30,
+                    type: "single-choice",
+                    question: "30.若攻击者伪造大量用户对业务服务器发起 DDoS 攻击，则以下哪一项为虚假源攻击的有效措施？（安全考点）",
+                    options: [
+                        "A.智能 DNS 调度",
+                        "B.CDN缓存",
+                        "C.源认证技术",
+                        "D.负载均衡技术"
+                    ],
+                    correctAnswer: "C.源认证技术",
+                    explanation: "虚假源攻击通常涉及攻击者伪造源 IP 地址，以隐藏其真实来源并混淆网络防御。有效的虚假源攻击防御措施包括： A. 智能DNS 调度：这不是直接针对虚假源攻击的措施，而是一种用于负载均衡和提高性能的方法。 B. CDN 缓存：CDN（内容分发网络）主要用于加速内容传递，而不是针对虚假源攻击的措施。 C. 源认证技术：源认证技术可以验证数据包的来源是否合法，防止虚假源攻击。 D. 负载均衡技术：负载均衡技术用于均衡流量，但不能直接解决虚假源攻击的问题。所以，答案 C 是虚假源攻击的有效措施。"
+                },
+                {
+                    id: 31,
+                    type: "single-choice",
+                    question: "31.在 Linux 主机上，可通过查看以下哪一个文件来统计当前系统中的所有用户名称及登陆方式？（安全考点）",
+                    options: [
+                        "A./etc/shadow",
+                        "B./etc/passwd",
+                        "C./etc/rc.local",
+                        "D./etc/profile"
+                    ],
+                    correctAnswer: "B./etc/passwd",
+                    explanation: "您可以通过查看 /etc/passwd 文件来统计当前系统中的所有用户名称及登陆方式。"
+                },
+                {
+                    id: 32,
+                    type: "single-choice",
+                    question: "32.以下关于双机热备的描述，错误的是哪一项？（安全考点）",
+                    options: [
+                        "A.负载分担组网下，两台防火墙都是主用设备。因此如果允许两台主用设备之间能够相互备份命令，那么可能就会造成两台设备命令相互覆盖或冲突的问题",
+                        "B.在主备备份组网下，配置命令和状态信息都由主用设备备份到备用设备",
+                        "C.负载分担组网下，配置命令可以由“配置备用设备”备份到”配置主设备”",
+                        "D.负载分担模式组网中流量由两台设备共同处理，可以比主备备份模式或镜像模式组网承担更大的峰值流量"
+                    ],
+                    correctAnswer: "C.负载分担组网下，配置命令可以由“配置备用设备”备份到”配置主设备”",
+                    explanation: ""
+                },
+                {
+                    id: 33,
+                    type: "single-choice",
+                    question: "33.针对 SIP Flood 政击，华为防火墙能采取以下哪一项的防范技术？（安全考点）",
+                    options: [
+                        "A.指纹防范",
+                        "B.首包丢弃",
+                        "C.源探测",
+                        "D.限流"
+                    ],
+                    correctAnswer: "C.源探测",
+                    explanation: "针对 SIP Flood 攻击，华为防火墙可以采取源探测作为一种防范技术。源探测用于检测可能的攻击流量，并识别并阻止恶意源IP 地址。"
+                },
+                {
+                    id: 34,
+                    type: "single-choice",
+                    question: "34.以下关于 SSL VPN 中网络扩展过程的描述，错误的是哪一项？（安全考点）",
+                    options: [
+                        "A.远程用户向企业内网的 Server发送业务请求报文，该报文通过SSL VPN 隧道到达虚拟网关",
+                        "B.可靠传输模式中，SSL VPN 采用 SSL 协议封装报文，并以 UDP协议作为传输协议",
+                        "C.触发网络扩展功能后，首先需要远程用户与虚拟网关之间会建立一条 SSL VPN 隧道",
+                        "D.远程用户本地 PC 会自动生成一个虚拟网卡，虚拟网关从地址池中随机选择一个 IP 地址，分配给远程用户的虚拟网卡"
+                    ],
+                    correctAnswer: "B.可靠传输模式中，SSL VPN 采用 SSL 协议封装报文，并以 UDP协议作为传输协议",
+                    explanation: "描述 B 是错误的。在 SSL VPN 的可靠传输模式中，SSL VPN通常采用 SSL 协议封装报文，但传输协议通常是 TCP而不是UDP。SSL VPN 通过 TCP 协议提供可靠的数据传输。"
+                },
+                {
+                    id: 35,
+                    type: "single-choice",
+                    question: "35.在 Linux 主机上查看是否存在异常的任务计划（非用户自行设定），可使用以下哪一个命令？（安全考点）",
+                    options: [
+                        "A.crontab-u mysql",
+                        "B.crontab-e",
+                        "C.crontab-r",
+                        "D.crontab-l"
+                    ],
+                    correctAnswer: "D.crontab-l",
+                    explanation: "要查看是否存在异常的任务计划，可以使用命令 crontab -l或 crontab -u <用户名> -l。选项 -l 用于列出用户的任务计划列表。"
+                },
+                {
+                    id: 36,
+                    type: "single-choice",
+                    question: "36.当企业有访客来临时，在方便访客接入的同时，需要对访客访问行为进行管控。针对此类访客场景，一般建议采用以下哪一种认证方式？（安全考点）",
+                    options: [
+                        "A.MAC旁路认证",
+                        "B.Portal 认证",
+                        "C.802.1X认证",
+                        "D.MAC认证"
+                    ],
+                    correctAnswer: "B.Portal 认证",
+                    explanation: "针对访客场景，一般建议采用 Portal 认证方式。Portal 认证允许访客通过访问 Web 页面进行认证，这种方式方便且可以对访客的访问行为进行管控和审查。"
+                },
+                {
+                    id: 37,
+                    type: "single-choice",
+                    question: "37.以下哪一项不属于 IKE 验证远端对等体的方式？（安全考点）",
+                    options: [
+                        "A.数字证书认证",
+                        "B.AD认证",
+                        "C.预共享密钥认证",
+                        "D.数字信封认证"
+                    ],
+                    correctAnswer: "B.AD认证",
+                    explanation: "AD 认证并不属于 IKE 验证远端对等体的方式。IKE 通常使用数字证书认证、预共享密钥认证和数字信封认证来验证远端对等体的身份。"
+                },
+                {
+                    id: 38,
+                    type: "single-choice",
+                    question: "38.以下关于文件类型识别结果异常情况的描述，错误的是哪一项？（安全考点）",
+                    options: [
+                        "A.文件类型无法识别是指无法识别出文件类型，且没有文件扩展名",
+                        "B.文件损坏是指由于文件被破坏而无法进行文件类型识别",
+                        "C.文件扩展名不匹配是指文件类型与文件扩展名不一致",
+                        "D.文件类型无法识别是指无法识别出文件类型，也无法识别出文件扩展名"
+                    ],
+                    correctAnswer: "D.文件类型无法识别是指无法识别出文件类型，也无法识别出文件扩展名",
+                    explanation: "描述 A 是错误的。文件类型无法识别通常是指无法识别出文件类型，但可能有文件扩展名。其他描述是关于文件类型识别结果异常情况的正确描述。"
+                },
+                {
+                    id: 39,
+                    type: "single-choice",
+                    question: "39.以下关于虚拟接口的描述。错误的是哪项？（安全考点）",
+                    options: [
+                        "A.虚拟接口名的格式为＂Virtual—if＋接口号”",
+                        "B.根系统的虚拟接口为 Virtual—if",
+                        "C.虚拟系统之间通过虚拟接口实现互访",
+                        "D.虚拟接口的链路层和协议层始终是 UP"
+                    ],
+                    correctAnswer: "B.根系统的虚拟接口为 Virtual—if",
+                    explanation: "描述 B 是错误的。根系统的虚拟接口通常不是\"Virtual-if\"，而是根据具体设备和配置的不同可能具有不同的名称。"
+                },
+                {
+                    id: 40,
+                    type: "single-choice",
+                    question: "40.以下关于防火墙双机热备系统版本升级特点的指述，错误的是哪一项？（安全考点）",
+                    options: [
+                        "A.当现网防火墙系统版本不支持某些特性时，需要升级系统版本",
+                        "B.在进行双机热备版本升级时，遵循的原则为先升级 Active 设备，再升级 Standby 设备",
+                        "C.当现网防火墙系统版本出现 Bug时，需要升级系统版本",
+                        "D.版本升级对升级前的设备型号和版本有要求"
+                    ],
+                    correctAnswer: "B.在进行双机热备版本升级时，遵循的原则为先升级 Active 设备，再升级 Standby 设备",
+                    explanation: "描述 D 是错误的。通常情况下，版本升级确实对升级前的设备型号和版本有要求，以确保兼容性和稳定性。这是一个重要的注意事项。"
+                },
+                {
+                    id: 41,
+                    type: "single-choice",
+                    question: "41.通用漏洞评估系统（Common VulnerabilityScoring System，CVSS）是广泛应用的漏洞评分开放标准，采用了模块 化评分体系，其中不包含以下哪一项？（安全考点）",
+                    options: [
+                        "A.环境维度",
+                        "B.时间维度",
+                        "C.基本维度",
+                        "D.空间维度"
+                    ],
+                    correctAnswer: "D.空间维度",
+                    explanation: "描述 D 是错误的。CVSS 包括了环境维度、时间维度、基本维度等多个维度来评估漏洞的严重性，但没有\"空间维度\"这个概念。"
+                },
+                {
+                    id: 42,
+                    type: "single-choice",
+                    question: "42.以下关于保证带宽和最大带宽的描述，错误的是哪一项？（安全考点）",
+                    options: [
+                        "A.可以基于每 IP／用户设置保证带宽和最大带宽",
+                        "B.如果流量大于最大带宽，则直接丢弃超出最大带宽的流量",
+                        "C.针对 IP 或用户的保证带宽和最大带宽设置可实现更加细化的带宽限制",
+                        "D.如果流量小于保证带宽，这部分流量在出接口与其它带宽通道中同类型的流量自由竞争带宽资源"
+                    ],
+                    correctAnswer: "B.如果流量大于最大带宽，则直接丢弃超出最大带宽的流量",
+                    explanation: "描述 B 是错误的。如果流量大于最大带宽，通常不是直接丢弃超出最大带宽的流量，而是根据不同的策略进行处理，例如使用流量调节机制，排队，或者丢弃优先级较低的流量。"
+                },
+                {
+                    id: 43,
+                    type: "single-choice",
+                    question: "43.以下关于 RADIUS 和 HWTACACS 协议的描述，错误的是哪一项？（安全考点）",
+                    options: [
+                        "A.都支持对设备上的配置命令进行授权使用",
+                        "B.结构上都采用客户端／服务器模式",
+                        "C.都有较好的灵活性和可扩展性",
+                        "D.都使用共享密钥对传输的用户信息进行加密"
+                    ],
+                    correctAnswer: "A.都支持对设备上的配置命令进行授权使用",
+                    explanation: "描述 D 是错误的。RADIUS 和 HWTACACS 协议通常都使用共享密钥对传输的用户信息进行加密，以确保安全传输。"
+                },
+                {
+                    id: 44,
+                    type: "single-choice",
+                    question: "44.在 802.1X 认证中，为了支持 EAP 中继方式，RADIUS 协议新增了一些属性，其中用来封装 EAP 报文的 RADIUS 属性是以下哪一项？（安全考点）",
+                    options: [
+                        "A.NAS-Identifier",
+                        "B.EAP-Message",
+                        "C.Message-Authenticator",
+                        "D.NAS-Message"
+                    ],
+                    correctAnswer: "B.EAP-Message",
+                    explanation: "用来封装 EAP 报文的 RADIUS 属性通常是\"EAP-Message\"，它用于传输 EAP 认证过程中的消息。"
+                },
+                {
+                    id: 45,
+                    type: "single-choice",
+                    question: "45.中国在 2.4GHz 频段支持的信道个数有多少个（）？(VLAN 考点)",
+                    options: [
+                        "A.11",
+                        "B.13",
+                        "C.3",
+                        "D.5"
+                    ],
+                    correctAnswer: "B.13",
+                    explanation: "在中国，2.4GHz 频段中可用的无线信道有 13 个，分别为 1-13信道。但是，由于不同国家和地区之间可能会存在差异，因此在其他国家和地区，2.4GHz 频段中可用的无线信道数量可能会有所不同。"
+                },
+                {
+                    id: 46,
+                    type: "single-choice",
+                    question: "46.以下选项中哪个频段范围属于中国支持的 5GHz 频段（）？(VLAN 考点)",
+                    options: [
+                        "A.5.15~5.25GHz",
+                        "B.5.25~5.35GHz",
+                        "C.5.725~5.825GHz",
+                        "D.5.725~5.850GHz"
+                    ],
+                    correctAnswer: "D.5.725~5.850GHz",
+                    explanation: "在中国，支持的 5GHz 频段范围是 5.725~5.850GHz，因此选项 D. 5.725~5.850GHz 是正确的。其他选项的频段范围不属于中国支持的 5GHz 频段。具体的频段分配可以根据相关的无线通信规定进行了解和确认。"
+                },
+                {
+                    id: 47,
+                    type: "single-choice",
+                    question: "47.第一个基于封包式技术的无线电通讯网络名字叫什么（）？(VLAN 考点)",
+                    options: [
+                        "A.INTERNET",
+                        "B.ARPANet",
+                        "C.ALOHNET",
+                        "D.NSFnet"
+                    ],
+                    correctAnswer: "C.ALOHNET",
+                    explanation: "第一个基于封包式技术的无线电通讯网络名字叫做ALOHAnet，因此选项 C. ALOHANet 是正确的。ALOHAnet 是由美国夏威夷大学开发的无线电网络，它于 1971年首次建立，使用无线电波进行数据传输，采用随机接入（random access）方式来进行通信。它被认为是现代计算机网络的先驱，对互联网的发展具有重要意义。"
+                },
+                {
+                    id: 48,
+                    type: "single-choice",
+                    question: "48.2.4 GHz 频段各信道中心频率之间的距离为多大（）？(VLAN 考点)",
+                    options: [
+                        "A.20 MHz",
+                        "B.22 MHz",
+                        "C.5 MHz",
+                        "D.10 MHz"
+                    ],
+                    correctAnswer: "C.5 MHz",
+                    explanation: "在 2.4 GHz 频段，各信道中心频率之间的距离是 5 MHz，因此选项 C. 5 MHz 是正确的答案。这意味着在使用相邻信道时，它们会发生重叠，因此会产生干扰。为减少干扰，通常在设置 WLAN网络时选择非重叠的信道。"
+                },
+                {
+                    id: 49,
+                    type: "single-choice",
+                    question: "49.802.11g 频段每个信道带宽多大（）？(VLAN 考点)",
+                    options: [
+                        "A.25 MHz",
+                        "B.20 MHz",
+                        "C.50 MHz",
+                        "D.22 MHz"
+                    ],
+                    correctAnswer: "B.20 MHz",
+                    explanation: "在 802.11g 标准中，2.4 GHz 频段每个信道的带宽是 20 MHz，因此选项 B. 20 MHz 是正确的答案。这意味着一个信道可以支持最高 54 Mbps 的数据传输速度。需要注意的是，由于信道之间的重叠，实际上并不会获得完全的 20 MHz 带宽"
+                },
+                {
+                    id: 50,
+                    type: "single-choice",
+                    question: "50.以下哪个协议可以同时支持 2.4GHz 频段和 5GHz 频段（）？(VLAN 考点)",
+                    options: [
+                        "A.802.11",
+                        "B.802.11b",
+                        "C.802.11g",
+                        "D.802.11n"
+                    ],
+                    correctAnswer: "D.802.11n",
+                    explanation: "802.11n 协议可以同时支持 2.4 GHz频段和 5 GHz 频段，因此选项 D. 802.11n 是正确答案。802.11n 是一种高性能的无线局域网协议，提供更高的传输速度和更好的信号覆盖范围。它支持多天线技术（MIMO），可以在不同频段上进行数据传输，以提供更快的速度和更好的网络性能"
+                },
+                {
+                    id: 51,
+                    type: "single-choice",
+                    question: "51.2.4 GHz 频段中国规定的工作频率是哪个范围（）？(VLAN 考点)",
+                    options: [
+                        "A.2.4 GHz-2.4835 GHz",
+                        "B.2.471 GHz-2.497 GHz",
+                        "C.2.4465 GHz-2.4835 GHz",
+                        "D.2.445 GHz-2.475 GHz"
+                    ],
+                    correctAnswer: "A.2.4 GHz-2.4835 GHz",
+                    explanation: "2.4 GHz 频段中国规定的工作频率范围是 2.4 GHz-2.4835 GHz，因此选项 A. 2.4 GHz-2.4835 GHz 是正确的答案。这个频率范围适用于无线局域网（WLAN）等各种无线通信设备，在中国境内使用时需要遵守相应的频谱管理规定"
+                },
+                {
+                    id: 52,
+                    type: "single-choice",
+                    question: "52.下面哪个是 IEEE 最初制定的一个无线局域网标准（）？(VLAN 考点)",
+                    options: [
+                        "A.289.IEEE 802.11",
+                        "B.290.IEEE 802.10",
+                        "C.291.IEEE 802.12",
+                        "D.292.IEEE 802.16"
+                    ],
+                    correctAnswer: "A.289.IEEE 802.11",
+                    explanation: "289.IEEE 802.11 是 IEEE 最初制定的一个无线局域网标准。IEEE 802.11 是指无线局域网（Wireless Local Area Network，WLAN）的标准，它定义了一系列用于无线数据传输的协议和技术。因此，选项 A 是正确答案。其他选项（290.IEEE 802.10、291.IEEE802.12 和 292.IEEE 802.16）分别代表其他不同的 IEEE 标准，但不是最初的无线局域网标准。"
+                },
+                {
+                    id: 53,
+                    type: "single-choice",
+                    question: "53.SSID 的中文名称是什么（）？(VLAN 考点)",
+                    options: [
+                        "A.基本服务集",
+                        "B.基本服务区域",
+                        "C.扩展服务集",
+                        "D.服务集标识"
+                    ],
+                    correctAnswer: "D.服务集标识",
+                    explanation: "SSID的中文名称是扩展服务集（Extended Service Set）。选项 D是正确答案。基本服务集（Basic Service Set）或基本服务区域（Basic Service Area）是指由一个接入点和与之关联的客户端设备组成的无线局域网。而 SSID（Service Set Identifier）是用于标识无线网络的名称。"
+                },
+                {
+                    id: 54,
+                    type: "single-choice",
+                    question: "54.由多个 AP 以及连接它们的分布式系统组成的基础架构模式网络，也称为什么（）？(VLAN 考点)",
+                    options: [
+                        "A.基本服务集",
+                        "B.基本服务区域",
+                        "C.扩展服务集",
+                        "D.扩展服务区域"
+                    ],
+                    correctAnswer: "C.扩展服务集",
+                    explanation: "由多个 AP 以及连接它们的分布式系统组成的基础架构模式网络称为扩展服务集（Extended Service Set）。选项 C 是正确答案。基本服务集（Basic Service Set）或基本服务区域（Basic ServiceArea）是指由一个接入点和与之关联的客户端设备组成的无线局域网。而扩展服务区域（Extended Service Area）并不是一个常见的术语，因此不是正确答案。"
+                },
+                {
+                    id: 55,
+                    type: "single-choice",
+                    question: "55.下面哪种 AP 模式不属于 WDS 网络（）？(VLAN 考点)",
+                    options: [
+                        "A.Root AP",
+                        "B.Middle AP",
+                        "C.Bridge AP",
+                        "D.Leaf AP"
+                    ],
+                    correctAnswer: "B.Middle AP",
+                    explanation: "在 WDS 网络中，包含了 Root AP（根接入点）、Bridge AP（桥接接入点）和 Leaf AP（叶节点接入点）等不同角色的 AP。其中，Middle AP 并不是 WDS 网络中的一个特定角色，因此选项 B是正确答案。"
+                },
+                {
+                    id: 56,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "56.下列关于 OSPF 邻居状态说法正确的有？（网络考点）",
+                    options: [
+                        "A.DD 报文的序列号是在 Exchange 状态下决定的",
+                        "B.路由器 LSDB 同步完成之后，转化为 Full 状态",
+                        "C.OSPF 的主从关系是在 ExStart 状态时形成的",
+                        "D.Exchange 状态下路由器相互发送包含链路状态信息摘要的 DD 报文，描述本地 LSDB 的内容"
+                    ],
+                    correctAnswer: [
+                        "B.路由器 LSDB 同步完成之后，转化为 Full 状态",
+                        "C.OSPF 的主从关系是在 ExStart 状态时形成的",
+                        "D.Exchange 状态下路由器相互发送包含链路状态信息摘要的 DD 报文，描述本地 LSDB 的内容"
+                    ],
+                    explanation: "主从关系是在此状态下形成的；初始 DD 序列号是在此状态下决定的。在此状态下发送的 DD 报文不包含链路状态描述。"
+                },
+                {
+                    id: 57,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "57.管理员无法通过 Telnet登录华为路由器，但是其他管理员可以正常登录，那么下面哪些项是可能的原因？（网络考点）",
+                    options: [
+                        "A.该管理员用户账户已经被禁用",
+                        "B.AR2200路由器的 Telnet服务已经被禁用",
+                        "C.该管理员用户账户的权限级别已经被修改为 0",
+                        "D.该管理员用户账户已经被删除"
+                    ],
+                    correctAnswer: [
+                        "A.该管理员用户账户已经被禁用",
+                        "D.该管理员用户账户已经被删除"
+                    ],
+                    explanation: "账户的权限级别为 0也能登录到设备，telnet 服务被禁用的话，其他管理员也无法正常登录"
+                },
+                {
+                    id: 58,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "58.经典的网络转发方式是基于路由表路由表转发．Opeflow交换机的转发方式是基于流表转发，对于这两种转发方式，说法正确的是？（网络考点）",
+                    options: [
+                        "A.流表的匹配方式是同时匹配流量的 MAC 地址和 IP 地址。",
+                        "B.路由表是定长的。一台设备只能有一张公共的路由表。",
+                        "C.流表是变长的。一台网络设备只能有一张流表。",
+                        "D.路由表的匹配方式是匹配拥有最长掩码的目的网段路由。"
+                    ],
+                    correctAnswer: [
+                        "B.路由表是定长的。一台设备只能有一张公共的路由表。",
+                        "D.路由表的匹配方式是匹配拥有最长掩码的目的网段路由。"
+                    ],
+                    explanation: "路由表是定长的，一台设备只能有一张公共的路由表。不同的路由器可以有不同的路由表，但是在同一个路由器上，只能有一张公共的路由表来指导数据包的转发。路由器在转发相应数据包在路由表中进行路由选择时，优先选择掩码最大的路由条目。"
+                },
+                {
+                    id: 59,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "59.在华为设备中，OSPF 选举 Router ID的方法可以是下列哪种？（网络考点）",
+                    options: [
+                        "A.使用默认的 127.0.0.1",
+                        "B.如果未配置 Loopback 接口，则在其他接口的 IP 地址中选取最大的 IP 地址作为、、",
+                        "C.Router ID 如果配置了 Loopback 接口，则从 Loopback接口的 IP 地址中选择最大的 IP 地址作为 Router ID",
+                        "D.华为交换机可能使用最大的 VLANIF 的 IP 地址作为 Router ID",
+                        "E.通过手工定义一个任意的合法 Router ID"
+                    ],
+                    correctAnswer: [
+                        "B.如果未配置 Loopback 接口，则在其他接口的 IP 地址中选取最大的 IP 地址作为、、",
+                        "C.Router ID 如果配置了 Loopback 接口，则从 Loopback接口的 IP 地址中选择最大的 IP 地址作为 Router ID",
+                        "D.华为交换机可能使用最大的 VLANIF 的 IP 地址作为 Router ID",
+                        "E.通过手工定义一个任意的合法 Router ID"
+                    ],
+                    explanation: "1、OSPF的 Router ID选举规则. a）如果通过命令设置了routerID，则选择此作为 ROUTER ID. b）如果没通过命令设置routerID，若有 loopback 地址，则选择最大的 loopback 地址作为router ID；若无 loopback地址，则选择其他接口中地址最大的作为router ID。. 2、OSPF 的 router ID 刷新规则. a）当且仅当被选举为routerID 的接口的地址被删除或修改，才会触发选举过程，此过程需要 reset OSPF 进程才生效；. b）被选择的接口状态改变、新配置更大的 loopback 或其他接口地址，均不会导致 router id 重新选举；. c）router ID不可以是 0.0.0.0 或 255.255.255.255."
+                },
+                {
+                    id: 60,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "60.PPP 协议由以下哪些协议组成？（网络考点）",
+                    options: [
+                        "A.NCP",
+                        "B.认证协议",
+                        "C.LCP",
+                        "D.PPPOE"
+                    ],
+                    correctAnswer: [
+                        "A.NCP",
+                        "B.认证协议",
+                        "C.LCP"
+                    ],
+                    explanation: "PPP 由 LCP、认证、NCP、terminate 组成"
+                },
+                {
+                    id: 61,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "61.以下哪些字段是 IPV6和 IPV4报文头中都存在的字段？（网络考点）",
+                    options: [
+                        "A.Next Header",
+                        "B.Version",
+                        "C.Source Address",
+                        "D.Destination Address"
+                    ],
+                    correctAnswer: [
+                        "B.Version",
+                        "C.Source Address",
+                        "D.Destination Address"
+                    ],
+                    explanation: "Next Header字段信息只存在于 IPv6 报文的报头中,用于表明IPv6 是否存在扩展报头。（网络考点）"
+                },
+                {
+                    id: 62,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "62.IPv6无状态地址自动配置使用以下哪些报文？",
+                    options: [
+                        "A.SN",
+                        "B.RS",
+                        "C.RA",
+                        "D.NA"
+                    ],
+                    correctAnswer: [
+                        "B.RS",
+                        "C.RA"
+                    ],
+                    explanation: "IPv6 通过 RS 和 RA来实现无状态自动配置。"
+                },
+                {
+                    id: 63,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "63.Agile Controller 能够实现准入控制的技术有哪些？（网络考点）",
+                    options: [
+                        "A.MAC认证",
+                        "B.Portal 认证",
+                        "C.802.1X认证",
+                        "D.SACG认证"
+                    ],
+                    correctAnswer: [
+                        "A.MAC认证",
+                        "B.Portal 认证",
+                        "C.802.1X认证",
+                        "D.SACG认证"
+                    ],
+                    explanation: "“目前华为的准入控制技术有 5 种,分别是 MAC 认证,RADIUS 认证,802.1X 认证,PORTAL 认证以及 SACG。"
+                },
+                {
+                    id: 64,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "64.BFD检测可以同哪些协议模块联动（网络考点）",
+                    options: [
+                        "A.VRRF",
+                        "B.OSPF",
+                        "C.BGP",
+                        "D.静态路由"
+                    ],
+                    correctAnswer: [
+                        "A.VRRF",
+                        "B.OSPF",
+                        "C.BGP",
+                        "D.静态路由"
+                    ],
+                    explanation: "BFD 是一个与协议无关、介质无关的快速检测协议。题目中各选项描述的协议都可以配置与 BFD 联动。BFD 还可以跟 IS-IS、PIM 和 EFM 联动。"
+                },
+                {
+                    id: 65,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "65.DHCP Relay又称为 DHCP 中继，如果需要配置 DHCP Relay，那么需要包括以下哪些步骤？（网络考点）",
+                    options: [
+                        "A.配置 DHCP 服务器组的组名",
+                        "B.配置 DHCP 服务器组中 DHCP 服务器 IP 地址",
+                        "C.配置启动 DHCP Relay 功的接口编号及接口的 IP 地址",
+                        "D.配置 option82 插入功能"
+                    ],
+                    correctAnswer: [
+                        "A.配置 DHCP 服务器组的组名",
+                        "B.配置 DHCP 服务器组中 DHCP 服务器 IP 地址",
+                        "C.配置启动 DHCP Relay 功的接口编号及接口的 IP 地址"
+                    ],
+                    explanation: "ption 82 实现了 dhcp 客户端和 dhcp中继设备的地址信息在dhcp 服务器上的记录,与其他软件配合使用可以实现 dhcp分配的限制和计费功能。"
+                },
+                {
+                    id: 66,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "66.DHCP Server即 DHCP 服务器，负责客户端 IP 地址的分配，在配置 DHCP Server 时，需要包括以下 哪些步骤（网络考点）",
+                    options: [
+                        "A.全局使能 DHCP功能",
+                        "B.配置 DHCP 的 option82 选项",
+                        "C.采用全局地址池的 DHCP 服务器模式时，配置全局地址池",
+                        "D.采用端地址池的 DHCP服务器模式时，配置端口地址池"
+                    ],
+                    correctAnswer: [
+                        "A.全局使能 DHCP功能",
+                        "C.采用全局地址池的 DHCP 服务器模式时，配置全局地址池",
+                        "D.采用端地址池的 DHCP服务器模式时，配置端口地址池"
+                    ],
+                    explanation: "option 为选配选项，不是必须步骤"
+                },
+                {
+                    id: 67,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "67.VRRP可以同哪些机制结合来监视上行链路的连通性（网络考点）",
+                    options: [
+                        "A.接口 track",
+                        "B.BFD",
+                        "C.NQA",
+                        "D.Ip-link"
+                    ],
+                    correctAnswer: [
+                        "A.接口 track",
+                        "B.BFD",
+                        "C.NQA",
+                        "D.Ip-link"
+                    ],
+                    explanation: "VRRP用来监测上行链路的连通性的机制包括 track 模块、BFD、NQA、IP-LINK 等。所以题目中各个选项的描述都是正确的。"
+                },
+                {
+                    id: 68,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "68.按照分类规则参考信息的不同，流量分类可以分为（网络考点）",
+                    options: [
+                        "A.简单流分类",
+                        "B.复杂流分类",
+                        "C.按需流分类",
+                        "D.业务流分类"
+                    ],
+                    correctAnswer: [
+                        "A.简单流分类",
+                        "B.复杂流分类"
+                    ],
+                    explanation: "流量分类是按照一定的规则来识别符合某类特征的报文,而且特征不同的报文可以享受到不同服务。流量分类可以分为简单流分类和复杂流分类。"
+                },
+                {
+                    id: 69,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "69.包过滤防火墙提供了对分片报文进行检测过滤的支持，包过滤防火墙可以过滤的分片报文有（网络考点）",
+                    options: [
+                        "A.后续分片报文",
+                        "B.非分片报文",
+                        "C.伪造的 ICMP 差错报文",
+                        "D.首片分片报文"
+                    ],
+                    correctAnswer: [
+                        "A.后续分片报文",
+                        "D.首片分片报文"
+                    ],
+                    explanation: "包过滤防火墙将识别报文类型,如:非分片报文、后续分片报文,对所有类型的报文都做过滤。"
+                },
+                {
+                    id: 70,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "70.当使用 eSight对历史告警进行查间时，则可以按照下列哪些条件进行告警过滤？（网络考点）",
+                    options: [
+                        "A.告警级别",
+                        "B.首次发生时间",
+                        "C.告警源",
+                        "D.告警名称"
+                    ],
+                    correctAnswer: [
+                        "A.告警级别",
+                        "B.首次发生时间",
+                        "C.告警源",
+                        "D.告警名称"
+                    ],
+                    explanation: "当用 esight 对历史告警进行过滤查询时， 可通过设置告警源、告警级别或具体的告警事件以及通知的用户、首次发生时间、告警名称等信息，实现有选择性地进行告警过滤查询。所以题目中各个选项的描述都是正确的。"
+                },
+                {
+                    id: 71,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "71.当拥塞发生时，通常会影响到 QOS 的哪些指标（网络考点）",
+                    options: [
+                        "A.传输时延",
+                        "B.传输抖动",
+                        "C.传输带宽",
+                        "D.传输距离"
+                    ],
+                    correctAnswer: [
+                        "A.传输时延",
+                        "B.传输抖动",
+                        "C.传输带宽"
+                    ],
+                    explanation: "当网络发生拥塞时,一般会出现数据丢失,时延增加,吞吐量下降,严重时甚至会导致“拥塞崩溃”(congestion collapse)。通常情况下,当网络中负载过度增加致使网络性能下降时,就会发生网络拥塞。不影响传输距离。"
+                },
+                {
+                    id: 72,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "72.动态主机配置协议 DHCP可以分配以下哪些网络参数？（网络考点）",
+                    options: [
+                        "A.IP 地址",
+                        "B.网关地址",
+                        "C.操作系统名称",
+                        "D.DNS 地址"
+                    ],
+                    correctAnswer: [
+                        "A.IP 地址",
+                        "B.网关地址",
+                        "D.DNS 地址"
+                    ],
+                    explanation: "DHCP无法分配操作系统名称"
+                },
+                {
+                    id: 73,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "73.端口镜像可以对哪些流量进行镜像（网络考点）",
+                    options: [
+                        "A.接口接受的报文",
+                        "B.端发送的报文",
+                        "C.端口发送和接收的报文",
+                        "D.端口丢弃的报文"
+                    ],
+                    correctAnswer: [
+                        "A.接口接受的报文",
+                        "B.端发送的报文",
+                        "C.端口发送和接收的报文"
+                    ],
+                    explanation: "端口镜像可以对端口的接收报文、发送报文和接收发送报文同时进行镜像。"
+                },
+                {
+                    id: 74,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "74.对于此台交换机上的配置描述正确的是（网络考点）", // ⚠️ 此题描述不完整，缺少“此台交换机上的配置”的具体内容，但根据答案和解析推断。
+                    options: [
+                        "A.默认情况下，配置 DHCP服务器和 DHCP delay 都必须开启DHCP服务",
+                        "B.VLANIF100接口会将接收到 DHCP 报文通过中继发送到外部DHCP Server",
+                        "C.为 VLANIF100接口指定 DHCP 服务器组为 dhcpgroup1",
+                        "D.首先需要创建 DHCP 服务器组并向服务器组添动加 DHCP 服务器",
+                        "E.默认情况下，DHCPgroup1会自动添加网络中的 DHCP服务器"
+                    ],
+                    correctAnswer: [
+                        "A.默认情况下，配置 DHCP服务器和 DHCP delay 都必须开启DHCP服务",
+                        "B.VLANIF100接口会将接收到 DHCP 报文通过中继发送到外部DHCP Server",
+                        "C.为 VLANIF100接口指定 DHCP 服务器组为 dhcpgroup1",
+                        "D.首先需要创建 DHCP 服务器组并向服务器组添动加 DHCP 服务器"
+                    ],
+                    explanation: "进入路由器首页,如图选择“DHCP 服务器”进入配置界面，DHCPgroup1 需要手动添加 DHCP 服务器进程"
+                },
+                {
+                    id: 75,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "75.二层以太网交换机中的默认 VLAN 有以下哪些特点？（网络考点）",
+                    options: [
+                        "A.默认 VLAN 无法被手动删除",
+                        "B.缺省情况下交换机所有端口都是默认 VLAN 的成员端口",
+                        "C.必须先创建默认 VLAN，才能为它分配端口",
+                        "D.在交换机上配置的 IP 地址只会被应用到默认 VLAN 的成员端口"
+                    ],
+                    correctAnswer: [
+                        "A.默认 VLAN 无法被手动删除",
+                        "B.缺省情况下交换机所有端口都是默认 VLAN 的成员端口"
+                    ],
+                    explanation: "默认 VLAN 无法被手动删除，"
+                },
+                {
+                    id: 76,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "76.根据所控制的信号参量的不同，调制方式可分为哪些（）？(VLAN 考点)",
+                    options: [
+                        "A.调幅",
+                        "B.调频",
+                        "C.调相",
+                        "D.调 波"
+                    ],
+                    correctAnswer: [
+                        "A.调幅",
+                        "B.调频",
+                        "C.调相"
+                    ],
+                    explanation: "正确的选项是 A.调幅、B.调频和 C.调相。选项 D.调波并不是一种常见的调制方式。"
+                },
+                {
+                    id: 77,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "77.WLAN 工作频段包括哪些（）？(VLAN 考点)",
+                    options: [
+                        "A.2 GHz",
+                        "B.5 GHz",
+                        "C.5.4 GHz",
+                        "D.2.4 GHz"
+                    ],
+                    correctAnswer: [
+                        "B.5 GHz",
+                        "D.2.4 GHz"
+                    ],
+                    explanation: "WLAN（无线局域网）的工作频段包括 2.4 GHz 和 5 GHz。因此，选项 B. 5 GHz 和选项 D. 2.4 GHz 是正确的答案。2.4 GHz是最常见的无线局域网频段，而 5 GHz 频段则提供更高的带宽和较少的干扰，适用于更高需求的应用。选项 A. 2 GHz和选项 C. 5.4 GHz不是 WLAN 的常见工作频段。"
+                },
+                {
+                    id: 78,
+                    type: "multiple-choice", // 已更正为多选题
+                    question: "78.2.4 GHz 频段最多可以划分为多少个信道（）？(VLAN 考点)",
+                    options: [
+                        "A.14",
+                        "B.13",
+                        "C.11",
+                        "D.3"
+                    ],
+                    correctAnswer: [
+                        "A.14"
+                    ],
+                    explanation: "2.4 GHz 频段可以划分为 14 个信道，因此选项 A. 14 是正确的答案。这些信道之间重叠，因此在设置无线局域网网络时需要选择不同的信道以减少干扰。在国际标准化组织（ISO）和国际电信联盟（ITU）的规定下，只有 11个信道是非重叠的。"
+                },
+                {
+                    id: 79,
+                    type: "true-false", // 已更正为判断题
+                    question: "79.路由器进行数据包转发时需要修改数据包中的目的 IP 地址。（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "错误",
+                    explanation: "路由器转发数据包就是这样，所以它始终是不会改 IP 地址的，只会改 MAC。 当有数据包传到路由器时，路由器首先将其的目的地址与路由表进 对⾏ ⽐"
+                },
+                {
+                    id: 80,
+                    type: "true-false", // 已更正为判断题
+                    question: "80.RSTP 协议中，边缘端口收到配置 BPDU 报文，就丧失了边缘端口属性。（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: "但是一旦边缘端口收到配置 BPDU，就丧失了边缘端口属性，成为普通 STP 端口，并重新进行生成树计算，从而引起网 络震荡。"
+                },
+                {
+                    id: 81,
+                    type: "true-false", // 已更正为判断题
+                    question: "81.根桥交换机上所有的端口都是指定端口。（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: "只有非根桥设备才会存在有\"根端口\"的说法.而对于根桥自己，只需要指定自己的一个端口与对应的根端口对接。 所以根桥上都是指定端口，没有根端口。"
+                },
+                {
+                    id: 82,
+                    type: "true-false", // 已更正为判断题
+                    question: "82.二层组网中，如果发生环路则可能会导致广播风暴。（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: "二层网络设备处于同一个广播域下，广播报文在环路中会反复持续传送，无限循环，形成广播风暴，引发 MAC 地址表不稳定等故障现象，进而影响正常业务，导致用户通信质量较差，甚至通信中断。"
+                },
+                {
+                    id: 83,
+                    type: "true-false", // 已更正为判断题
+                    question: "83.Telnet 基于 TCP协议。（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: "telnet 端口号是 23。 端口包括物理端口和逻辑端口。 物理端口是用于连接物理设备之间的接口，逻辑端口是逻辑上用于区分服务的端口。"
+                },
+                {
+                    id: 84,
+                    type: "true-false", // 已更正为判断题
+                    question: "84.IEEE802.11ac 标准只支特 5GHz 频段。（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: ""
+                },
+                {
+                    id: 85,
+                    type: "true-false", // 已更正为判断题
+                    question: "85.STA发现无线网络的方式只有通过 AP 对外发送的 Beacon帧。（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "错误",
+                    explanation: " 缺省情况下，AP 发送 Beacon帧的周期为 100TUs，2.4G 射频发送 beacon帧的速率为 5.5Mbps，5G 射频发送 beacon帧的速率为 6Mbps。"
+                },
+                {
+                    id: 86,
+                    type: "true-false", // 已更正为判断题
+                    question: "86.运行 SNMP协议的网络设备可以主动上报告警信息以便网络管理员及时发现故障。（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: "SNMP 定义了网管管理设备的几种操作，以及设备故障时能向网管主动发送告警。 网络管理使用 SNMP协议时存在网络管理站 (NMS)、代理进程 (Agent)和被管理设备 3 个角色。"
+                },
+                {
+                    id: 87,
+                    type: "true-false", // 已更正为判断题
+                    question: "87.数据链路层使用 ppp封装，链路两端的 IP 地址可以不在同一个网段。（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: "PPP 的 NCP协议可以获取对端设备的 IP 地址，即使两端的IP 地址不在同一网段，也可以互相 Ping通。"
+                },
+                {
+                    id: 88,
+                    type: "true-false", // 已更正为判断题
+                    question: "88.主机在访问服务器的 web服务器时，网络层 protocol 字段取值为 6。（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: ""
+                },
+                {
+                    id: 89,
+                    type: "true-false", // 已更正为判断题
+                    question: "89.华为 AR 路由器的命令行界面下，save 命令的作用是保存当前的系统时间。（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "错误",
+                    explanation: " save 命令用来保存当前配置信息到系统默认的存储路径中。save 命令需要在用户视图配置，可以接以下参数： 注意事项 该命令为覆盖式命令，如果保存时文件名已经存在，原文件的内容将被替换。"
+                },
+                {
+                    id: 90,
+                    type: "true-false", // 已更正为判断题
+                    question: "90.华为路由器中 tracert 诊断工具被用来跟踪数据的转发路径？（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: "Traceroute 从源主机向目的主机发送一连串的 IP 数据报，数据报中封装的是无法交付的 UDP|用户数据报。 第一个数据报的 P1的生存时间 TTL 设置为 1。"
+                },
+                {
+                    id: 91,
+                    type: "true-false", // 已更正为判断题
+                    question: "91.运行 ospf 协议的路由器在完成 LSDB 同步后才能达到 FULL 状态？（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: "经过在 Loading 状态互发 LSR、LSU、LSAck，双方链路状态数据库 LSDB 中的链路状态信息最终会完全相同，称为同步，双方邻居关系迁移到最终的 Full 状态。"
+                },
+                {
+                    id: 92,
+                    type: "true-false", // 已更正为判断题
+                    question: "92.路由器所有的接口属于同一个广播域？",
+                    options: ["正确", "错误"],
+                    correctAnswer: "错误",
+                    explanation: "连接到路由器上的网段会被分配成不同的广播域，广播数据不会穿过路由器。 所以路由器中的每一个端口也是一个广播域。"
+                },
+                {
+                    id: 93,
+                    type: "true-false", // 已更正为判断题
+                    question: "93.运行 Ospf 协议的路由器所有接口必须属于同一区域？（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "错误",
+                    explanation: ""
+                },
+                {
+                    id: 94,
+                    type: "true-false", // 已更正为判断题
+                    question: "94.动态路由协议能够自动适应网络拓扑的变化？（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: "动态路由是网络中的路由器之间相互通信，传递路由信息，利用收到的路由信息更新路由器表的过程。 它能实时地适应网络结构的变化。 如果路由更新信息表明发生了网络变化，路由选择软件就会重新计算路由，并发出新的路由更新信息。 这些信息通过各个网络，引起各路由器重新启动其路由算法，并更新各自的路由表以动态地反映网络拓扑变化 。"
+                },
+                {
+                    id: 95,
+                    type: "true-false", // 已更正为判断题
+                    question: "95.Telnetlib 中 telnet.read_very_eager 的作用是非阻塞的读取数据。通常需要和 time 模块一起使用。（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: ""
+                },
+                {
+                    id: 96,
+                    type: "true-false", // 已更正为判断题
+                    question: "96.运行 STP 协议的交换机，端口在任何状态下都可以直接转化为 Disabled状态。（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: "端口既不处理和转发 BPDU 报文，也不转发用户流量。Disabled ：禁用状态，端口状态为 Down ，不接收 BPDU ，不转发用户流量。 Blocking ：阻塞状态，阻塞端口的最终状态，接收并处理 BPDU ，不转发用户流量。"
+                },
+                {
+                    id: 97,
+                    type: "true-false", // 已更正为判断题
+                    question: "97.IPv6地址 2001：ABEF：224E：FFE2：BCCO：CD00：DDBE：8D58 不能简写。（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: ""
+                },
+                {
+                    id: 98,
+                    type: "true-false", // 已更正为判断题
+                    question: "98.二层交换机属于数据链路层设备，可以识别数据帧中的 mac 地址信息，根据 mac 地址转发数据，并将这些 mac 地址与对应的端口信息记录在自己的 mac 地址表中。",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: " 交换机在接收到数据帧以后，首先、会记录数据帧中的源 MAC 地址和对应的接口到 MAC 表中，接着、会检查自己的MAC表中是否有数据帧中目标 MAC 地址的信息"
+                },
+                {
+                    id: 99,
+                    type: "true-false", // 已更正为判断题
+                    question: "99.如果配置的 ACL 规则存在包含关系，应注意严格条件的规则编号需要排序靠前，宽松条件的规则编号需要排序靠后，避免报文因命中宽松条件的规则而停止往下继续匹配从而使其无法命中严格条件的规则。（数通考点）",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: "ACL 匹配原则： （1）匹配顺序是自上而下匹配的 （2）一旦匹配，匹配的动作就终止（经常匹配的写在前面，细化匹配的要写在前面） （3）ACL 末隐含一条 deny all"
+                },
+                {
+                    id: 100,
+                    type: "true-false", // 已更正为判断题
+                    question: "100.基本服务集是 802.11 网络的基本组件，由一组相互通信的工作站所构成。(VLAN 考点)",
+                    options: ["正确", "错误"],
+                    correctAnswer: "错误",
+                    explanation: "基本服务集（Basic Service Set，BSS）是 802.11 无线网络的一个组成要素，它由一个无线接入点（Access Point，AP）和与之关联的客户端设备所构成。一个 BSS 可以包含多个客户端设备，这些设备可以相互通信，但 BSS本身并不是由工作站组成的。"
+                },
+                {
+                    id: 101,
+                    type: "true-false", // 已更正为判断题
+                    question: "101.BSSID 实际上就是 AP 的 MAC 地址，用来标识 AP 管理的BSS 。(VLAN 考点)",
+                    options: ["正确", "错误"],
+                    correctAnswer: "正确",
+                    explanation: "BSSID（Basic Service Set Identifier）是用来唯一标识一个基本服务集（BSS）的 MAC 地址。它通常用于无线网络中的接入点（AP）来识别和管理不同的 BSS。因此，选项 A. True 是正确的答案。"
+                },
+                {
+                    id: 102,
+                    type: "true-false", // 已更正为判断题
+                    question: "102.华为的 AP 产品仅能支持配置一个 SSID 。(VLAN 考点)",
+                    options: ["正确", "错误"],
+                    correctAnswer: "错误",
+                    explanation: "华为的 AP 产品可以支持配置多个 SSID。SSID（Service SetIdentifier）是无线网络中用于标识不同无线网络的名称。一个 AP可以同时支持多个 SSID，这使得用户可以通过同一台 AP 连接到不同的无线网络，而不需要额外的设备或 AP。因此，"
+                },
+                {
+                    id: 103,
+                    type: "true-false", // 已更正为判断题
+                    question: "103.WDS 技术提高了整个网络结构的灵活性和便捷性，但是只能支持点对点的工作模式。(VLAN 考点)",
+                    options: ["正确", "错误"],
+                    correctAnswer: "错误",
+                    explanation: "WDS（Wireless Distribution System）技术可以提高整个网络结构的灵活性和便捷性，同时还支持点对多点和多点对多点的工作模式，并且可以在不同的 AP之间进行桥接。"
+                }
+            ];
+
+            // --- 对 allQuestions 数组进行处理 ---
+            // 1. 重新编号 id
+            allQuestions.forEach((question, index) => {
+                question.id = index + 1;
+            });
+
+            // 2. 修正 question 106 选项 D 的文本
+            const q106 = allQuestions.find(q => q.question.includes("SSID 的中文名称是什么")); // 使用问题文本查找，因为id已被重新编号
+            if (q106 && q106.options[3]) {
+                q106.options[3] = "D.服务集标识";
+            }
+            
+            // 3. 将 null explanations 替换为 ""
+            allQuestions.forEach(question => {
+                if (question.explanation === null) {
+                    question.explanation = "";
+                }
+            });
+
+
+            let totalQuestionsCount = allQuestions.length; // 根据实际题库数量更新
+            let selectedQuestions = []; // 本次测试实际使用的题目
+            let currentQuestionIndex = 0;
+            let userAnswers = []; // 存储用户对每道题的答案
+            let score = 0;
+            let quizStartTime;
+            let timerInterval;
+            let isReviewMode = false; // 是否在回顾模式
+
+            // --- 页面切换函数 ---
+            function showScreen(screen) {
+                currentScreen.classList.remove('active');
+                screen.classList.add('active');
+                currentScreen = screen;
+            }
+
+            // --- 密码验证 ---
+            passwordSubmit.addEventListener('click', () => {
+                if (passwordInput.value === CORRECT_PASSWORD) {
+                    passwordError.textContent = '';
+                    showScreen(modeSelectionScreen);
+                    // 初始化题目数量显示
+                    totalQuestionsDisplay.textContent = totalQuestionsCount;
+                    numQuestionsInput.max = totalQuestionsCount;
+                    numQuestionsInput.value = Math.min(10, totalQuestionsCount); // 默认10道题，或全部题目
+                } else {
+                    passwordError.textContent = '密码错误，请重试！';
+                }
+            });
+
+            // --- 模式选择 ---
+            practiceModeBtn.addEventListener('click', () => {
+                currentMode = 'practice';
+                currentModeDisplay.textContent = '练习模式';
+                showScreen(questionSettingsScreen);
+            });
+
+            examModeBtn.addEventListener('click', () => {
+                currentMode = 'exam';
+                currentModeDisplay.textContent = '考试模式';
+                showScreen(questionSettingsScreen);
+            });
+
+            backToModeBtn.addEventListener('click', () => {
+                showScreen(modeSelectionScreen);
+                questionNumError.textContent = '';
+            });
+
+            // --- 题目设置与开始测试 ---
+            startTestBtn.addEventListener('click', () => {
+                const num = parseInt(numQuestionsInput.value, 10);
+                if (isNaN(num) || num <= 0 || num > totalQuestionsCount) {
+                    questionNumError.textContent = `请输入有效的题目数量 (1-${totalQuestionsCount})！`;
+                    return;
+                }
+                questionNumError.textContent = '';
+                startQuiz(num);
+            });
+
+            // --- 启动测试逻辑 ---
+            function startQuiz(numQuestions) {
+                // totalQuestionsCount 已经在上面初始化为 allQuestions.length
+                // totalQuestionsDisplay.textContent 和 numQuestionsInput.max 已经在密码验证后初始化，此处再次更新以防万一
+                totalQuestionsDisplay.textContent = totalQuestionsCount;
+                numQuestionsInput.max = totalQuestionsCount;
+                numQuestionsInput.value = Math.min(numQuestions, totalQuestionsCount);
+
+                if (totalQuestionsCount === 0) {
+                     alert("题库为空，无法开始测试！请添加题目数据。");
+                     return;
+                }
+
+
+                // 随机选择题目
+                const shuffledQuestions = [...allQuestions].sort(() => Math.random() - 0.5);
+                selectedQuestions = shuffledQuestions.slice(0, numQuestions);
+
+                currentQuestionIndex = 0;
+                userAnswers = Array(selectedQuestions.length).fill(null);
+                score = 0;
+                isReviewMode = false;
+                quizStartTime = Date.now();
+                startTimer();
+                loadQuestion();
+                showScreen(quizScreen);
+
+                // 根据模式显示/隐藏按钮
+                prevQuestionBtn.style.display = 'inline-block'; // 始终显示上一题
+                if (currentMode === 'practice') {
+                    submitExamBtn.style.display = 'none';
+                    showAnswerBtn.style.display = 'inline-block';
+                    nextQuestionBtn.textContent = '下一题';
+                } else { // exam mode
+                    submitExamBtn.style.display = 'inline-block';
+                    showAnswerBtn.style.display = 'none';
+                    nextQuestionBtn.textContent = '保存并下一题';
+                }
+            }
+
+            // --- 计时器功能 ---
+            function startTimer() {
+                clearInterval(timerInterval);
+                let seconds = 0;
+                timerInterval = setInterval(() => {
+                    seconds++;
+                    const minutes = Math.floor(seconds / 60);
+                    const remainingSeconds = seconds % 60;
+                    timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            }
+
+            function stopTimer() {
+                clearInterval(timerInterval);
+            }
+
+            // --- 加载题目 ---
+            function loadQuestion() {
+                if (selectedQuestions.length === 0) {
+                    questionText.textContent = "没有题目可以加载。请检查题库。";
+                    optionsContainer.innerHTML = '';
+                    return;
+                }
+
+                const question = selectedQuestions[currentQuestionIndex];
+                questionText.innerHTML = `${currentQuestionIndex + 1}. ${question.question}`; // 显示当前题目的序号
+                optionsContainer.innerHTML = '';
+                feedbackMessage.textContent = '';
+                feedbackMessage.className = 'feedback'; // Reset feedback style
+
+                const answerType = question.type === 'multiple-choice' ? 'checkbox' : 'radio';
+
+                question.options.forEach((option, index) => {
+                    const optionItem = document.createElement('div');
+                    optionItem.className = 'option-item';
+                    const input = document.createElement('input');
+                    input.type = answerType;
+                    input.name = 'question-' + question.id; // 使用题目id作为name，确保单选框组正确
+                    input.value = option;
+                    input.id = `option-${question.id}-${index}`;
+
+                    const label = document.createElement('label');
+                    label.htmlFor = `option-${question.id}-${index}`;
+                    label.textContent = option;
+
+                    optionItem.appendChild(input);
+                    optionItem.appendChild(label);
+                    optionsContainer.appendChild(optionItem);
+
+                    optionItem.addEventListener('click', () => {
+                        // 如果是多选，点击项切换选中状态
+                        if (answerType === 'checkbox') {
+                            input.checked = !input.checked;
+                        } else { // 单选，确保其他单选框取消选中
+                            optionsContainer.querySelectorAll(`input[name="question-${question.id}"]`).forEach(radio => {
+                                if (radio !== input) radio.checked = false;
+                            });
+                            input.checked = true;
+                        }
+                        updateOptionStyles();
+                    });
+                });
+
+                // 恢复用户之前的选择
+                const savedAnswer = userAnswers[currentQuestionIndex];
+                if (savedAnswer) {
+                    if (answerType === 'radio') {
+                        const radio = optionsContainer.querySelector(`input[value="${savedAnswer}"]`);
+                        if (radio) radio.checked = true;
+                    } else if (answerType === 'checkbox') {
+                        savedAnswer.forEach(ans => {
+                            const checkbox = optionsContainer.querySelector(`input[value="${ans}"]`);
+                            if (checkbox) checkbox.checked = true;
+                        });
+                    }
+                }
+                updateOptionStyles();
+
+                // 禁用选择和显示答案（如果在练习模式下已查看或在回顾模式）
+                if (currentMode === 'practice' && feedbackMessage.textContent !== '' || isReviewMode) {
+                    disableOptions();
+                    showCorrectAnswerHighlight();
+                } else {
+                    enableOptions();
+                }
+
+                updateNavButtons();
+            }
+
+            function updateOptionStyles() {
+                const question = selectedQuestions[currentQuestionIndex];
+                const answerType = question.type === 'multiple-choice' ? 'checkbox' : 'radio';
+
+                optionsContainer.querySelectorAll('.option-item').forEach(item => {
+                    item.classList.remove('selected', 'correct', 'incorrect');
+                    const input = item.querySelector(answerType);
+                    if (input.checked) {
+                        item.classList.add('selected');
+                    }
+                });
+            }
+
+            function disableOptions() {
+                optionsContainer.querySelectorAll('input').forEach(input => {
+                    input.disabled = true;
+                    input.parentElement.style.cursor = 'default';
+                });
+            }
+
+            function enableOptions() {
+                optionsContainer.querySelectorAll('input').forEach(input => {
+                    input.disabled = false;
+                    input.parentElement.style.cursor = 'pointer';
+                });
+            }
+
+            // --- 获取用户答案 ---
+            function getUserCurrentAnswer() {
+                const question = selectedQuestions[currentQuestionIndex];
+                if (question.type === 'multiple-choice') {
+                    return Array.from(optionsContainer.querySelectorAll('input[type="checkbox"]:checked'))
+                                .map(input => input.value);
+                } else {
+                    const selectedRadio = optionsContainer.querySelector('input[type="radio"]:checked');
+                    return selectedRadio ? selectedRadio.value : null;
+                }
+            }
+
+            // --- 导航按钮更新 ---
+            function updateNavButtons() {
+                prevQuestionBtn.disabled = currentQuestionIndex === 0;
+                if (currentMode === 'exam') {
+                    nextQuestionBtn.style.display = currentQuestionIndex === selectedQuestions.length - 1 ? 'none' : 'inline-block';
+                    submitExamBtn.style.display = currentQuestionIndex === selectedQuestions.length - 1 ? 'inline-block' : 'none';
+                } else { // practice mode
+                    nextQuestionBtn.style.display = 'inline-block';
+                    submitExamBtn.style.display = 'none';
+                    showAnswerBtn.style.display = (feedbackMessage.textContent === '') ? 'inline-block' : 'none'; // 如果已显示答案，则隐藏
+                    nextQuestionBtn.textContent = currentQuestionIndex === selectedQuestions.length - 1 ? '完成练习' : '下一题';
+                }
+
+                // 回顾模式下的按钮
+                if (isReviewMode) {
+                    prevQuestionBtn.style.display = 'inline-block';
+                    nextQuestionBtn.style.display = 'inline-block';
+                    showAnswerBtn.style.display = 'none'; // 回顾模式直接显示答案
+                    submitExamBtn.style.display = 'none';
+                    nextQuestionBtn.textContent = '下一题';
+                    if (currentQuestionIndex === selectedQuestions.length - 1) {
+                        nextQuestionBtn.style.display = 'none';
+                    }
+                }
+            }
+
+            // --- 答题界面事件监听 ---
+            prevQuestionBtn.addEventListener('click', () => {
+                saveCurrentAnswer();
+                currentQuestionIndex--;
+                loadQuestion();
+            });
+
+            nextQuestionBtn.addEventListener('click', () => {
+                saveCurrentAnswer();
+                if (currentQuestionIndex < selectedQuestions.length - 1) {
+                    currentQuestionIndex++;
+                    loadQuestion();
+                } else {
+                    // 如果是练习模式的最后一题，则完成
+                    if (currentMode === 'practice') {
+                        calculateScore();
+                        showResults();
+                    }
+                }
+            });
+
+            submitExamBtn.addEventListener('click', () => {
+                saveCurrentAnswer();
+                calculateScore();
+                showResults();
+            });
+
+            showAnswerBtn.addEventListener('click', () => {
+                checkAnswer(true); // 强制显示答案
+            });
+
+            function saveCurrentAnswer() {
+                userAnswers[currentQuestionIndex] = getUserCurrentAnswer();
+            }
+
+            // --- 检查答案（练习模式下使用）---
+            function checkAnswer(forceShow = false) {
+                const question = selectedQuestions[currentQuestionIndex];
+                const userAnswer = getUserCurrentAnswer();
+
+                // 如果没有选择，且不是强制显示，则提示
+                if (!userAnswer || (Array.isArray(userAnswer) && userAnswer.length === 0) && !forceShow) {
+                    feedbackMessage.textContent = '请选择一个选项！';
+                    feedbackMessage.classList.add('incorrect');
+                    return;
+                }
+
+                // 仅在练习模式下且未显示过答案时才进行判断和高亮
+                if (currentMode === 'practice' && feedbackMessage.textContent === '' || forceShow) {
+                    const isCorrect = compareAnswers(userAnswer, question.correctAnswer);
+                    if (isCorrect) {
+                        feedbackMessage.textContent = '回答正确！';
+                        feedbackMessage.classList.remove('incorrect');
+                        feedbackMessage.classList.add('correct');
+                    } else {
+                        feedbackMessage.textContent = '回答错误。';
+                        feedbackMessage.classList.remove('correct');
+                        feedbackMessage.classList.add('incorrect');
+                    }
+                    showCorrectAnswerHighlight(userAnswer);
+                    disableOptions();
+                    showAnswerBtn.style.display = 'none'; // 显示答案后隐藏查看答案按钮
+                    updateNavButtons(); // 再次更新按钮状态，可能启用下一题
+                }
+            }
+
+            // 比较用户答案和正确答案
+            function compareAnswers(userAnswer, correctAnswer) {
+                if (Array.isArray(correctAnswer)) { // 多选题
+                    if (!Array.isArray(userAnswer) || userAnswer.length !== correctAnswer.length) {
+                        return false;
+                    }
+                    // 比较元素是否完全一致，不考虑顺序
+                    return userAnswer.every(ans => correctAnswer.includes(ans)) &&
+                           correctAnswer.every(ans => userAnswer.includes(ans));
+                } else { // 单选题或判断题
+                    return userAnswer === correctAnswer;
+                }
+            }
+
+            // 显示正确答案和用户选择的高亮
+            function showCorrectAnswerHighlight(userAnswer = null) {
+                const question = selectedQuestions[currentQuestionIndex];
+                const correctAnswer = question.correctAnswer;
+                const isMultipleChoice = Array.isArray(correctAnswer);
+                const answerType = question.type === 'multiple-choice' ? 'checkbox' : 'radio';
+
+                optionsContainer.querySelectorAll('.option-item').forEach(item => {
+                    const input = item.querySelector(answerType);
+                    const optionValue = input.value;
+
+                    item.classList.remove('selected', 'correct', 'incorrect'); // 清除旧样式
+
+                    // 高亮用户选择（如果已选择且非回顾模式）
+                    if (!isReviewMode) {
+                        const isUserSelected = isMultipleChoice ? userAnswer?.includes(optionValue) : userAnswer === optionValue;
+                        if (isUserSelected) {
+                            item.classList.add('selected');
+                        }
+                    } else { // 回顾模式下，直接高亮用户存储的答案
+                        const savedUserAnswer = userAnswers[currentQuestionIndex];
+                        const isUserSelectedInReview = isMultipleChoice ? savedUserAnswer?.includes(optionValue) : savedUserAnswer === optionValue;
+                        if (isUserSelectedInReview) {
+                            item.classList.add('selected');
+                        }
+                    }
+
+
+                    // 高亮正确答案
+                    const isCorrectOption = isMultipleChoice ? correctAnswer.includes(optionValue) : correctAnswer === optionValue;
+                    if (isCorrectOption) {
+                        item.classList.add('correct');
+                    }
+
+                    // 如果是回顾模式，且用户做错了，则显示用户错误选项
+                    if (isReviewMode) {
+                        const savedUserAnswer = userAnswers[currentQuestionIndex];
+                        const isUserIncorrectSelection = isMultipleChoice ? (savedUserAnswer?.includes(optionValue) && !correctAnswer.includes(optionValue)) : (savedUserAnswer === optionValue && savedUserAnswer !== correctAnswer);
+                        if (isUserIncorrectSelection) {
+                             item.classList.add('incorrect');
+                        }
+                    } else if (currentMode === 'practice') { // 练习模式下，用户答案与正确答案不符时，高亮错误
+                        const isUserAnswered = isMultipleChoice ? (userAnswer && userAnswer.length > 0) : (userAnswer !== null);
+                        if (isUserAnswered && !compareAnswers(userAnswer, correctAnswer)) {
+                             const isUserIncorrectSelection = isMultipleChoice ? (userAnswer?.includes(optionValue) && !correctAnswer.includes(optionValue)) : (userAnswer === optionValue && userAnswer !== correctAnswer);
+                             if (isUserIncorrectSelection) {
+                                 item.classList.add('incorrect');
+                             }
+                        }
+                    }
+                });
+
+                // 解释
+                if (question.explanation) {
+                    feedbackMessage.innerHTML = `<strong>解析：</strong> ${question.explanation}`;
+                    feedbackMessage.classList.remove('correct', 'incorrect'); // 清除颜色
+                    feedbackMessage.classList.add('explanation'); // 添加解释样式
+                } else if (!isReviewMode && currentMode === 'practice' && feedbackMessage.textContent === '回答正确！') {
+                    // Do nothing, keep "回答正确"
+                } else if (!isReviewMode && currentMode === 'practice' && feedbackMessage.textContent === '回答错误。') {
+                    // Do nothing, keep "回答错误"
+                }
+                else {
+                     feedbackMessage.textContent = ''; // 清除旧解释
+                     feedbackMessage.classList.remove('explanation');
+                }
+            }
+
+
+            // --- 计算分数 ---
+            function calculateScore() {
+                score = 0;
+                selectedQuestions.forEach((question, index) => {
+                    const userAnswer = userAnswers[index];
+                    if (compareAnswers(userAnswer, question.correctAnswer)) {
+                        score++;
+                    }
+                });
+                stopTimer();
+            }
+
+            // --- 显示结果界面 ---
+            function showResults() {
+                const endTime = Date.now();
+                const totalDurationSeconds = Math.floor((endTime - quizStartTime) / 1000);
+                const minutes = Math.floor(totalDurationSeconds / 60);
+                const seconds = totalDurationSeconds % 60;
+
+                scoreDisplay.textContent = score;
+                maxScoreDisplay.textContent = selectedQuestions.length;
+                accuracyDisplay.textContent = ((score / selectedQuestions.length) * 100).toFixed(2) + '%';
+                totalTimeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                // 显示/隐藏错题重测按钮
+                const incorrectQuestions = selectedQuestions.filter((q, i) => !compareAnswers(userAnswers[i], q.correctAnswer));
+                retakeIncorrectBtn.style.display = incorrectQuestions.length > 0 ? 'inline-block' : 'none';
+
+                showScreen(resultsScreen);
+            }
+
+            // --- 结果界面操作 ---
+            reviewAllBtn.addEventListener('click', () => startReview(selectedQuestions));
+
+            reviewIncorrectBtn.addEventListener('click', () => {
+                const incorrectQuestions = selectedQuestions.filter((q, i) => !compareAnswers(userAnswers[i], q.correctAnswer));
+                startReview(incorrectQuestions);
+            });
+
+            retakeTestBtn.addEventListener('click', () => {
+                const num = parseInt(numQuestionsInput.value, 10); // 使用上次的题目数量
+                startQuiz(num);
+            });
+
+            backToModeSelectionBtn.addEventListener('click', () => {
+                showScreen(modeSelectionScreen);
+            });
+
+            retakeIncorrectBtn.addEventListener('click', () => {
+                const incorrectQuestions = selectedQuestions.filter((q, i) => !compareAnswers(userAnswers[i], q.correctAnswer));
+                if (incorrectQuestions.length > 0) {
+                    // 重新开始一个针对错题的练习
+                    currentMode = 'practice'; // 错题重测通常是练习模式
+                    currentModeDisplay.textContent = '错题重测 (练习模式)';
+                    // 创建新的题目数组，以便重测时用户的答案可以重新记录
+                    selectedQuestions = incorrectQuestions.map(q => ({...q})); // 深拷贝，防止修改原始数据
+                    userAnswers = Array(selectedQuestions.length).fill(null);
+                    currentQuestionIndex = 0;
+                    score = 0;
+                    isReviewMode = false;
+                    quizStartTime = Date.now();
+                    startTimer();
+                    loadQuestion();
+                    showScreen(quizScreen);
+
+                    // 按钮调整
+                    prevQuestionBtn.style.display = 'inline-block';
+                    submitExamBtn.style.display = 'none';
+                    showAnswerBtn.style.display = 'inline-block';
+                    nextQuestionBtn.textContent = '下一题';
+                } else {
+                    alert("没有错题可供重测！");
+                }
+            });
+
+            // --- 题目回顾功能 ---
+            function startReview(questionsToReview) {
+                selectedQuestions = questionsToReview;
+                currentQuestionIndex = 0;
+                isReviewMode = true;
+
+                if (selectedQuestions.length === 0) {
+                    reviewQuestionsContainer.innerHTML = "<p>没有题目可以回顾。</p>";
+                    showScreen(reviewScreen);
+                    return;
+                }
+
+                renderReviewQuestions();
+                showScreen(reviewScreen);
+            }
+
+            function renderReviewQuestions() {
+                reviewQuestionsContainer.innerHTML = '';
+                selectedQuestions.forEach((question, index) => {
+                    const reviewItem = document.createElement('div');
+                    reviewItem.className = 'review-question-item';
+
+                    const qTitle = document.createElement('h4');
+                    qTitle.textContent = `${index + 1}. ${question.question}`;
+                    reviewItem.appendChild(qTitle);
+
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = 'options-container';
+                    // 在回顾模式下，userAnswers数组的索引与selectedQuestions的索引是一致的
+                    const userAnswer = userAnswers[selectedQuestions.findIndex(q => q.id === question.id)];
+                    const isMultipleChoice = Array.isArray(question.correctAnswer);
+                    const inputType = isMultipleChoice ? 'checkbox' : 'radio';
+
+                    question.options.forEach(optionText => {
+                        const optionItem = document.createElement('div');
+                        optionItem.className = 'option-item';
+                        const input = document.createElement('input');
+                        input.type = inputType;
+                        input.name = `review-q-${question.id}`;
+                        input.value = optionText;
+                        input.disabled = true; // 回顾模式下禁用选择
+
+                        const label = document.createElement('label');
+                        label.textContent = optionText;
+
+                        optionItem.appendChild(input);
+                        optionItem.appendChild(label);
+                        optionsDiv.appendChild(optionItem);
+
+                        // 高亮用户选择和正确答案
+                        const isUserSelected = isMultipleChoice ? (userAnswer && userAnswer.includes(optionText)) : (userAnswer === optionText);
+                        const isCorrectOption = isMultipleChoice ? question.correctAnswer.includes(optionText) : question.correctAnswer === optionText;
+
+                        if (isUserSelected) {
+                            optionItem.classList.add('selected');
+                        }
+                        if (isCorrectOption) {
+                            optionItem.classList.add('correct');
+                        }
+                        // 如果用户选择了但不是正确答案，标记为错误
+                        if (isUserSelected && !isCorrectOption) {
+                            optionItem.classList.add('incorrect');
+                        }
+                    });
+                    reviewItem.appendChild(optionsDiv);
+
+                    // 添加解析
+                    if (question.explanation) {
+                        const explanationDiv = document.createElement('div');
+                        explanationDiv.className = 'review-explanation';
+                        explanationDiv.innerHTML = `<strong>解析：</strong> ${question.explanation}`;
+                        reviewItem.appendChild(explanationDiv);
+                    }
+
+                    reviewQuestionsContainer.appendChild(reviewItem);
+                });
+            }
+
+            closeReviewBtn.addEventListener('click', () => {
+                showScreen(resultsScreen); // 回到结果界面
+                isReviewMode = false;
+            });
+
+            // --- 初始化设置 ---
+            // 在这里初始化totalQuestionsCount
+            totalQuestionsCount = allQuestions.length;
+            totalQuestionsDisplay.textContent = totalQuestionsCount;
+            numQuestionsInput.max = totalQuestionsCount;
+            numQuestionsInput.value = Math.min(10, totalQuestionsCount); // 默认显示10题，如果总数不足10则显示总数
+
+            // 初始显示密码界面
+            showScreen(passwordScreen);
+        });
+    </script>
+</body>
+</html>
